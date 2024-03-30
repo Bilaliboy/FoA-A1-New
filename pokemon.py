@@ -1017,5 +1017,5 @@ if __name__ == '__main__':
     pass
 
 
-a = get_all_pokemon_types()
-print(a)
+#Squirt = Squirtle()
+#print(Squirt)

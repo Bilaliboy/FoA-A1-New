@@ -2,10 +2,10 @@ from pokemon import *
 import random
 from typing import List
 from battle_mode import BattleMode
-from data_structures.referential_array import *
-from data_structures.set_adt import *
+from data_structures.referential_array import ArrayR
+from data_structures.set_adt import Set
 
-
+'''	
 class ArraySet(Set[T]):
     #Time complexity O(n * Comp==) best case is O(Comp==)
     MIN_CAPACITY = 1
@@ -63,7 +63,7 @@ class ArraySet(Set[T]):
                 res.size += 1                        # O(1)
         return res
     
-    
+'''	    
 
 
 
@@ -89,7 +89,9 @@ class PokeTeam:
     
     #Timecomplexity is O(n * Comp==) best case and O(n^2 * Comp==) for worst case. Where n is the pokemon classes.
     def choose_manually(self):
+        print("a")
         team_size = int(input("Please select the size of your team between 1-6\n"))
+        print("b")
         for i in range(team_size):
             try:
                 target_name = str(input("Please enter the Pokemon you want to add to your team, example Zapdos:\n"))
@@ -109,7 +111,13 @@ class PokeTeam:
             self.team_count += 1
 
     def regenerate_team(self, battle_mode: BattleMode, criterion: str = None) -> None:
-        raise NotImplementedError
+        for i in range(self.TEAM_LIMIT):
+            pokemon = self.team[j]
+            if pokemon: # Check if there is a Pokemon object at this index
+                full_health_class = self.find_pokemon_class(pokemon.__class__.__name__)
+            if full_health_class:
+            # Update the health to the full health as defined in the class
+                pokemon.health = full_health_class().health
 
     def assign_team(self, criterion: str = None) -> None:
         raise NotImplementedError
