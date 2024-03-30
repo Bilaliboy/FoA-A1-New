@@ -6,6 +6,7 @@ import random
 from poke_team import *
 from pokemon import *
 
+
 class TestPokeTeam(unittest.TestCase):
     @number("2.1")
     @visibility(visibility.VISIBILITY_SHOW)

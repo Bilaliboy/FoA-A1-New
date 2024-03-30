@@ -111,7 +111,7 @@ class PokeTeam:
             self.team_count += 1
 
     def regenerate_team(self, battle_mode: BattleMode, criterion: str = None) -> None:
-        for i in range(self.TEAM_LIMIT):
+        for j in range(self.TEAM_LIMIT):
             pokemon = self.team[j]
             if pokemon: # Check if there is a Pokemon object at this index
                 full_health_class = self.find_pokemon_class(pokemon.__class__.__name__)
@@ -194,4 +194,6 @@ if __name__ == '__main__':
 
 team = PokeTeam()
 team.choose_manually()
+print(team)
+team.regenerate_team()
 
