@@ -4,6 +4,7 @@ This module contains PokeType, TypeEffectiveness and an abstract version of the 
 from abc import ABC
 from enum import Enum
 from data_structures.referential_array import ArrayR
+from math import ceil
 
 class PokeType(Enum):
     """
@@ -29,6 +30,21 @@ class TypeEffectiveness:
     """
     Represents the type effectiveness of one Pokemon type against another.
     """
+    EFFECT_TABLE = ((0.5,0.5,2.0,0.5,0.5,1.0,1.0,1.0,1.0,2.0,2.0,1.0,1.0,1.0,0.5),#Fire     index 0
+                (2.0,0.5,0.5,1.0,0.5,1.0,1.0,1.0,1.0,2.0,1.0,1.0,1.0,1.0,2.0),#Water    index 1
+                (0.5,2.0,0.5,2.0,0.5,1.0,1.0,2.0,1.0,0.5,2.0,1.0,2.0,1.0,1.0),#Grass    index 2
+                (2.0,1.0,0.5,1.0,1.0,1.0,0.5,2.0,0.5,1.0,1.0,1.0,1.0,2.0,1.0),#Bug      index 3
+                (1.0,1.0,1.0,1.0,2.0,0.5,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0),#dragon   index 4
+                (1.0,2.0,0.5,1.0,0.5,0.5,1.0,2.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0),#electric index 5
+                (1.0,1.0,1.0,0.5,1.0,1.0,1.0,0.5,0.0,1.0,2.0,2.0,0.5,2.0,0.5),#fighting index 6
+                (1.0,1.0,0.5,2.0,1.0,2.0,2.0,1.0,1.0,0.5,1.0,1.0,1.0,1.0,2.0),#flying   index 7
+                (1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,2.0,1.0,1.0,0.5,1.0,0.5,1.0),#ghost    index 8
+                (0.5,2.0,0.5,1.0,1.0,2.0,1.0,0.0,1.0,2.0,1.0,1.0,0.5,1.0,2.0),#ground   index 9
+                (2.0,1.0,1.0,1.0,1.0,1.0,2.0,2.0,1.0,1.0,0.5,1.0,1.0,1.0,2.0),#ice      index 10
+                (1.0,1.0,1.0,1.0,1.0,1.0,2.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0),#normal   index 11
+                (1.0,1.0,2.0,2.0,1.0,1.0,0.5,1.0,0.5,2.0,1.0,1.0,0.5,2.0,1.0),#poison   index 12
+                (1.0,1.0,1.0,1.0,1.0,1.0,2.0,1.0,1.0,1.0,1.0,2.0,2.0,0.5,1.0),#psychic  index 13
+                (0.5,2.0,1.0,1.0,1.0,1.0,0.5,0.5,1.0,2.0,2.0,1.0,1.0,1.0,2.0))#rock     index 14
 
     @classmethod
     def get_effectiveness(cls, attack_type: PokeType, defend_type: PokeType) -> float:
@@ -42,13 +58,15 @@ class TypeEffectiveness:
         Returns:
             float: The effectiveness of the attack, as a float value between 0 and 4.
         """
-        raise NotImplementedError
+        #Planning for how to get the effectiveness of a Pokemon
+        
+        return cls.EFFECT_TABLE[attack_type.value][defend_type.value]
 
     def __len__(self) -> int:
         """
         Returns the number of types of Pokemon
         """
-        raise NotImplementedError
+        return len(self.EFFECT_TABLE)
 
 
 class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-attributes
@@ -150,7 +168,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         """
         return self.battle_power
 
-    def attack(self, other_pokemon) -> float:
+    def attack(self, other_pokemon) -> int:
         """
         Calculates and returns the damage that this Pokemon inflicts on the
         other Pokemon during an attack.
@@ -161,7 +179,22 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Returns:
             int: The damage that this Pokemon inflicts on the other Pokemon during an attack.
         """
-        raise NotImplementedError
+        defence = other_pokemon.get_defence()
+        attack = self.get_battle_power()
+        attack_type = self.get_poketype()
+        defend_type = other_pokemon.get_poketype()
+
+        if defence < attack / 2:
+            damage = attack - defence
+        elif defence < attack:
+            damage = ceil((attack * 5/8) - (defence / 4))
+        else:
+            damage = ceil(attack / 4)
+        
+        yoMama = TypeEffectiveness()
+        effectiveness = yoMama.get_effectiveness(attack_type, defend_type)
+        damage_dealt = int(effectiveness) * damage
+        return damage_dealt
 
     def defend(self, damage: int) -> None:
         """
