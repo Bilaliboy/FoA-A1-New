@@ -1002,6 +1002,7 @@ class Dratini(Pokemon):
         self.defence = 10
         self.speed = 86
 
+#The Time complexity is O(n) where n is the number of classes in the module.
 def get_all_pokemon_types() -> ArrayR[Pokemon]:
     all_pokemon = ArrayR(77)
     i = 0
@@ -1014,3 +1015,7 @@ def get_all_pokemon_types() -> ArrayR[Pokemon]:
 
 if __name__ == '__main__':
     pass
+
+
+a = get_all_pokemon_types()
+print(a)
