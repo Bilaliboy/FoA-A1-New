@@ -222,7 +222,16 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Evolves the Pokemon to the next stage in its evolution line, and updates
           its attributes accordingly.
         """
-        raise NotImplementedError
+        next_index = self.evolution_line.index(self.name) + 1
+        if next_index < len(self.evolution_line):
+            self.name = self.evolution_line[next_index]    
+            self.health = int(self.health * 1.5)
+            self.speed = int(self.speed * 1.5)
+            self.defence = int(self.defence * 1.5)
+            self.battle_power = int(self.battle_power * 1.5)
+        else:
+            print(f"the Pokemon {self.name} cannot be evolved to the next stage")
+        return None
 
     def is_alive(self) -> bool:
         """
