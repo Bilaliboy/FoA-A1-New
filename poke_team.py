@@ -2,10 +2,10 @@ from pokemon import *
 import random
 from typing import List
 from battle_mode import BattleMode
-from data_structures.referential_array import ArrayR
-from data_structures.set_adt import Set
+from data_structures.referential_array import *
+from data_structures.set_adt import *
 
-'''	
+
 class ArraySet(Set[T]):
     #Time complexity O(n * Comp==) best case is O(Comp==)
     MIN_CAPACITY = 1
@@ -50,20 +50,7 @@ class ArraySet(Set[T]):
                 raise Exception("Set is full")
         self.array[self.size] = item
         self.size += 1
-    
-    #N and M are the size of self and other. Time complexity is O(M *(M+N).
-    def union(self, other: ArraySet[T]) -> ArraySet[T]:  # let n = |self|, m = |other|
-        res = ArraySet(len(self.array) + len(other.array))  # O(n + m)
-        for i in range(len(self)):       # n times
-            res.array[i] = self.array[i] # O(1)
-        res.size = self.size             # O(1)
-        for j in range(len(other)):           # m times
-            if other.array[j] not in self:    # O(n * comp)
-                res.array[res.size] = other.array[j] # O(1)
-                res.size += 1                        # O(1)
-        return res
-    
-'''	    
+
 
 
 
