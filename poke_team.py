@@ -4,13 +4,16 @@ from typing import List
 from battle_mode import BattleMode
 from data_structures.referential_array import *
 from data_structures.set_adt import *
+from data_structures.stack_adt import *
+from data_structures.queue_adt import *
+from data_structures.array_sorted_list import *
 
 
 class ArraySet(Set[T]):
     #Time complexity O(n * Comp==) best case is O(Comp==)
     MIN_CAPACITY = 1
     def __init__(self, capacity: int = 1) -> None:
-        set.__init__(self)
+        Set.__init__(self)
         self.array = ArrayR(max(self.MIN_CAPACITY, capacity))
     #O(1)
     def clear(self) -> None:
@@ -50,12 +53,76 @@ class ArraySet(Set[T]):
                 raise Exception("Set is full")
         self.array[self.size] = item
         self.size += 1
+        
+    def union(self, other: Set[T]) -> Set[T]:
+        """ Makes a union of the set with another set. """
+        pass
 
+    def intersection(self, other: Set[T]) -> Set[T]:
+        """ Makes an intersection of the set with another set. """
+        pass
 
+    def difference(self, other: Set[T]) -> Set[T]:
+        """ Creates a difference of the set with another set. """
+        pass
 
+#Array Stack Class to store When battle mode SET is selected.
+class ArrayStack(Stack[T]):
+    MIN_CAPACITY = 1
+    def __init__(self, max_capacity: int) -> None:
+        Stack.__init__(self)
+        self.array = ArrayR(max(self.MIN_CAPACITY, max_capacity))
 
+    def is_full(self) -> bool:
+        return len(self) == len(self.array)
+    
+    def push(self, item: T) -> None:
+        if self.is_full():
+            raise Exception("Stack is full")
+        self.array[len(self)] = item
+        self.length += 1
+    def peek(self) -> T:
+        if self.is_empty():
+            raise Exception("Stack is empty")
+        return self.array[self.length-1]
+    def reverse_first_half(stack: ArrayStack[Pokemon]) -> None:
+        #Stack to hold first half of the pokemon
+        temp_stack = ArrayStack(len(stack) // 2)
+        #itterates through the first half pops and pushes them into temp stack
+        for _ in range(len(stack) // 2):
+            temp_stack.push(stack.pop())
+        #push reversedd order back into stack
+        while not temp_stack.is_empty():
+            stack.push(temp_stack.pop())
 
-
+class CircularQueue(Queue[T]):
+    MIN_CAPACITY = 1
+    def __init__(self,max_capacity:int) -> None:
+        Queue.__init__(self)
+        self.front = 0
+        self.rear = 0
+        self.array = ArrayR(max(self.MIN_CAPACITY,max_capacity))
+    def clear(self) -> None:
+        Queue.__init__(self)
+        self.front = 0
+        self.rear = 0
+    def is_full(self) -> T:
+        return len(self) == len(self.array)
+    
+    def append(self, item: T) -> None:
+        if self.is_full():
+            raise Exception("Queue is full")
+        self.array[self.rear] = item
+        self.length += 1
+        self.rear = (self.rear + 1) % len(self.array)
+    
+    def serve(self) -> T:
+        if self.is_empty():
+            raise Exception("Queue is empty")
+        self.length -= 1
+        item = self.array[self.front]
+        self.front = (self.front+1) % len(self.array)
+        return item
 
 class PokeTeam:
     TEAM_LIMIT = 6
@@ -76,9 +143,7 @@ class PokeTeam:
     
     #Timecomplexity is O(n * Comp==) best case and O(n^2 * Comp==) for worst case. Where n is the pokemon classes.
     def choose_manually(self):
-        print("a")
         team_size = int(input("Please select the size of your team between 1-6\n"))
-        print("b")
         for i in range(team_size):
             try:
                 target_name = str(input("Please enter the Pokemon you want to add to your team, example Zapdos:\n"))
@@ -87,6 +152,7 @@ class PokeTeam:
                 continue
             pokemon_class = self.find_pokemon_class(target_name)
             self.team[i] = pokemon_class
+            self.team_count += 1
 
 
     def choose_randomly(self) -> None:
@@ -106,12 +172,37 @@ class PokeTeam:
             # Update the health to the full health as defined in the class
                 pokemon.health = full_health_class().health
 
+
+    #This function assigns the order of the team based on the criterion list.
     def assign_team(self, criterion: str = None) -> None:
-        raise NotImplementedError
-
+        #Created a new temporary list for the team.
+        temp_list = ArraySortedList(self.TEAM_LIMIT)
+        for j in range(self.team_count):
+            pokemon = self.team[j]
+            key = pokemon.get_attribute_by_criteria(criterion)
+            temp_list.add(ListItem(key=key, value=pokemon))
+        # Clear the current team to repopulate it
+        self.team.reset()
+        # Add each ListItem back to the team, now sorted by the new criterion
+        for j in range(self.team_count):
+            self.team.add(temp_list[j])
+    #This function assembles the team based on the battle_mode selected.
+    #Each battle_mode has different data structures.
     def assemble_team(self, battle_mode: BattleMode) -> None:
-        raise NotImplementedError
+        if battle_mode == 0:
+            None
+        elif battle_mode == 1:
+            None
+        #Optimised Mode 
+        elif battle_mode == 2:
+            self.team = ArraySortedList(self.TEAM_LIMIT)
 
+
+
+
+    #SET Mode Reverses the first half of the team
+    #Rotate Mode reverses the second half of the team
+    #Optimise mode it reverses the other, either ascending to descending or descending to ascending order.
     def special(self, battle_mode: BattleMode) -> None:
         raise NotImplementedError
 
@@ -160,7 +251,7 @@ class Trainer:
         return self.name
 
     def register_pokemon(self, pokemon: Pokemon) -> None:
-        pokemon_type = pokemon.get_type()
+        pokemon_type = pokemon.get_poketype()
         self.pokedox.add(pokemon_type)
 
 
@@ -175,7 +266,7 @@ class Trainer:
         return f"Trainer {self.name} Pokedex Completion {precent_completion}%.\n"
 
 
-
+"""	
 if __name__ == '__main__':
     t = Trainer('Ash')
     print(t)
@@ -183,10 +274,11 @@ if __name__ == '__main__':
     print(t)
     print(t.get_team())
 
+"""
 
-
-#team = PokeTeam()
-#team.choose_manually()
-#print(team)
-#team.regenerate_team()
-
+team = PokeTeam()
+team.choose_manually()
+print(team)
+team.assemble_team(2)
+print(team)
+team.assign_team("health")
