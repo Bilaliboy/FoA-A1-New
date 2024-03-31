@@ -68,7 +68,6 @@ class TypeEffectiveness:
         """
         return len(self.EFFECT_TABLE)
 
-
 class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-attributes
     """
     Represents a base Pokemon class with properties and methods common to all Pokemon.
@@ -248,3 +247,27 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         <name> (Level <level>) with <health> health and <experience> experience
         """
         return f"{self.name} (Level {self.level}) with {self.get_health()} health and {self.get_experience()} experience"
+    def get_attribute_by_criteria(self, criteria):
+        """
+        Returns the value of the attribute specified by the criteria string.
+
+        Parameters:
+        criteria (str): The criteria string specifying the attribute.
+
+        Returns:
+        The value of the requested attribute, or None if the criteria is invalid.
+        """
+        if criteria == "health":
+            return self.get_health()
+        elif criteria == "level":
+            return self.get_level()
+        elif criteria == "speed":
+            return self.get_speed()
+        elif criteria == "experience":
+            return self.get_experience()
+        elif criteria == "poketype":
+            return self.get_poketype()
+        elif criteria == "defence":
+            return self.get_defence()
+        elif criteria == "battle_power":
+            return self.get_battle_power()
