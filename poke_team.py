@@ -10,7 +10,7 @@ class ArraySet(Set[T]):
     #Time complexity O(n * Comp==) best case is O(Comp==)
     MIN_CAPACITY = 1
     def __init__(self, capacity: int = 1) -> None:
-        set.__innit_self__(self)
+        set.__init__(self)
         self.array = ArrayR(max(self.MIN_CAPACITY, capacity))
     #O(1)
     def clear(self) -> None:
@@ -26,7 +26,7 @@ class ArraySet(Set[T]):
     def is_full(self) -> bool:
         return len(self) == len(self.array)
     
-    #time complexity is O(N * Comp==) where N is the size of set. best case is O(1).
+    #time complexity is O(N*Comp==) where N is the size of set. best case is O(1).
     def __contains__(self, item: T) -> bool:
         for i in range(self.size):
             if item == self.array[i]:
@@ -39,7 +39,7 @@ class ArraySet(Set[T]):
             if item == self.array[i]:
                 self.array[i] = self.array[self.size - 1]
                 self.size -= 1
-            break
+                break
         else:
             raise KeyError(item)
     
@@ -160,27 +160,33 @@ class Trainer:
         return self.name
 
     def register_pokemon(self, pokemon: Pokemon) -> None:
-        raise NotImplementedError
+        pokemon_type = pokemon.get_type()
+        self.pokedox.add(pokemon_type)
+
 
     def get_pokedex_completion(self) -> float:
-        raise NotImplementedError
+        poke_types_stored = len(self.pokedox)
+        maximum_size_of_pokedex = len(PokeType)
+
+        return round((poke_types_stored/maximum_size_of_pokedex), 2 )
 
     def __str__(self) -> str:
-        raise NotImplementedError
+        precent_completion = self.get_pokedex_completion() * 100
+        return f"Trainer {self.name} Pokedex Completion {precent_completion}%.\n"
 
 
-'''
+
 if __name__ == '__main__':
     t = Trainer('Ash')
     print(t)
     t.pick_team("Random")
     print(t)
     print(t.get_team())
-'''
 
 
-team = PokeTeam()
-team.choose_manually()
-print(team)
-team.regenerate_team()
+
+#team = PokeTeam()
+#team.choose_manually()
+#print(team)
+#team.regenerate_team()
 
