@@ -12,7 +12,7 @@ from data_structures.array_sorted_list import *
 class ArraySet(Set[T]):
     #Time complexity O(n * Comp==) best case is O(Comp==)
     MIN_CAPACITY = 1
-    def __init__(self, capacity: int = 1) -> None:
+    def __init__(self, capacity: int = 15) -> None:
         Set.__init__(self)
         self.array = ArrayR(max(self.MIN_CAPACITY, capacity))
     #O(1)
@@ -45,6 +45,9 @@ class ArraySet(Set[T]):
                 break
         else:
             raise KeyError(item)
+        
+    def __str__(self):
+        return ", ".join(str(item) for item in self.array if item is not None)
     
     #time complexity is O(N * Comp==) and best case is O(1).
     def add(self, item: T) -> None:
@@ -95,34 +98,7 @@ class ArrayStack(Stack[T]):
         while not temp_stack.is_empty():
             stack.push(temp_stack.pop())
 
-class CircularQueue(Queue[T]):
-    MIN_CAPACITY = 1
-    def __init__(self,max_capacity:int) -> None:
-        Queue.__init__(self)
-        self.front = 0
-        self.rear = 0
-        self.array = ArrayR(max(self.MIN_CAPACITY,max_capacity))
-    def clear(self) -> None:
-        Queue.__init__(self)
-        self.front = 0
-        self.rear = 0
-    def is_full(self) -> T:
-        return len(self) == len(self.array)
     
-    def append(self, item: T) -> None:
-        if self.is_full():
-            raise Exception("Queue is full")
-        self.array[self.rear] = item
-        self.length += 1
-        self.rear = (self.rear + 1) % len(self.array)
-    
-    def serve(self) -> T:
-        if self.is_empty():
-            raise Exception("Queue is empty")
-        self.length -= 1
-        item = self.array[self.front]
-        self.front = (self.front+1) % len(self.array)
-        return item
 
 class PokeTeam:
     TEAM_LIMIT = 6
@@ -130,7 +106,7 @@ class PokeTeam:
     CRITERION_LIST = ["health", "defence", "battle_power", "speed", "level"]
 
     def __init__(self):
-        self.team = ArrayR(self.TEAM_LIMIT) # change None value if necessary
+        self.team = [None] * self.TEAM_LIMIT
         self.team_count = 0
 
 #How to find pokemon in pokeType.
@@ -179,7 +155,7 @@ class PokeTeam:
         temp_list = ArraySortedList(self.TEAM_LIMIT)
         for j in range(self.team_count):
             pokemon = self.team[j]
-            key = pokemon.get_attribute_by_criteria(criterion)
+            key = pokemon.get__attribute__by__criteria(criterion)
             temp_list.add(ListItem(key=key, value=pokemon))
         # Clear the current team to repopulate it
         self.team.reset()
@@ -192,7 +168,10 @@ class PokeTeam:
         if battle_mode == 0:
             None
         elif battle_mode == 1:
-            None
+            self.circular_queue = CircularQueue(self.TEAM_LIMIT)
+            # Add each Pokémon in self.team to the circular queue
+            for pokemon in self.team:
+                self.circular_queue.append(pokemon)
         #Optimised Mode 
         elif battle_mode == 2:
             self.team = ArraySortedList(self.TEAM_LIMIT)
@@ -237,9 +216,9 @@ class Trainer:
 
 
     def pick_team(self, method: str) -> None:
-        if method == "manual":
+        if method == "Manual":
             self.team.choose_manually()
-        elif method == "random":
+        elif method == 'Random':
             self.team.choose_randomly()
         else:
             raise ValueError("Unknown method")
@@ -252,7 +231,8 @@ class Trainer:
 
     def register_pokemon(self, pokemon: Pokemon) -> None:
         pokemon_type = pokemon.get_poketype()
-        self.pokedox.add(pokemon_type)
+        if pokemon_type not in self.pokedox:
+            self.pokedox.add(pokemon_type)
 
 
     def get_pokedex_completion(self) -> float:
@@ -262,8 +242,8 @@ class Trainer:
         return round((poke_types_stored/maximum_size_of_pokedex), 2 )
 
     def __str__(self) -> str:
-        precent_completion = self.get_pokedex_completion() * 100
-        return f"Trainer {self.name} Pokedex Completion {precent_completion}%.\n"
+        precent_completion = int(self.get_pokedex_completion() * 100)
+        return f"Trainer {self.name} Pokedex Completion: {precent_completion}%"
 
 
 """	
@@ -273,12 +253,52 @@ if __name__ == '__main__':
     t.pick_team("Random")
     print(t)
     print(t.get_team())
+    
+"""	
 
-"""
+"""	
+Bug fixes for optimised mode
 
 team = PokeTeam()
-team.choose_manually()
-print(team)
 team.assemble_team(2)
+team.choose_randomly()
 print(team)
+print("\n")
 team.assign_team("health")
+print(team)
+"""
+
+'''	
+
+Bug fixes for registering pokemon in pokedex.
+
+trainer = Trainer('Ash')
+print(trainer)
+
+# Register Pokémon and print the Pokédex after each registration
+trainer.register_pokemon(Pikachu())
+print("Pokédex after registering Pikachu:", trainer.pokedox)
+trainer.register_pokemon(Pidgey())
+print("Pokédex after registering Pidgey:", trainer.pokedox)
+trainer.register_pokemon(Aerodactyl())
+print("Pokédex after registering Aerodactyl:", trainer.pokedox)
+trainer.register_pokemon(Squirtle())
+print("Pokédex after registering Squirtle:", trainer.pokedox)
+trainer.register_pokemon(Weedle())
+print("Pokédex after registering Weedle:", trainer.pokedox)
+trainer.register_pokemon(Meowth())
+print("Pokédex after registering Meowth:", trainer.pokedox)
+trainer.register_pokemon(Zapdos())
+print("Pokédex after registering Zapdos:", trainer.pokedox)
+print(trainer)
+
+'''
+#circular que.
+team = PokeTeam()
+print(team)
+print("\n")
+team.choose_randomly()
+print(team)
+print("\n")
+team.assemble_team(1)
+print(team)

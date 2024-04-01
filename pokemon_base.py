@@ -247,7 +247,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         <name> (Level <level>) with <health> health and <experience> experience
         """
         return f"{self.name} (Level {self.level}) with {self.get_health()} health and {self.get_experience()} experience"
-    def get_attribute_by_criteria(self, criteria):
+    def get__attribute__by__criteria(self, criteria):
         """
         Returns the value of the attribute specified by the criteria string.
 
