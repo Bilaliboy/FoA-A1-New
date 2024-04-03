@@ -69,35 +69,6 @@ class ArraySet(Set[T]):
         """ Creates a difference of the set with another set. """
         pass
 
-#Array Stack Class to store When battle mode SET is selected.
-class ArrayStack(Stack[T]):
-    MIN_CAPACITY = 1
-    def __init__(self, max_capacity: int) -> None:
-        Stack.__init__(self)
-        self.array = ArrayR(max(self.MIN_CAPACITY, max_capacity))
-
-    def is_full(self) -> bool:
-        return len(self) == len(self.array)
-    
-    def push(self, item: T) -> None:
-        if self.is_full():
-            raise Exception("Stack is full")
-        self.array[len(self)] = item
-        self.length += 1
-    def peek(self) -> T:
-        if self.is_empty():
-            raise Exception("Stack is empty")
-        return self.array[self.length-1]
-    def reverse_first_half(stack: ArrayStack[Pokemon]) -> None:
-        #Stack to hold first half of the pokemon
-        temp_stack = ArrayStack(len(stack) // 2)
-        #itterates through the first half pops and pushes them into temp stack
-        for _ in range(len(stack) // 2):
-            temp_stack.push(stack.pop())
-        #push reversedd order back into stack
-        while not temp_stack.is_empty():
-            stack.push(temp_stack.pop())
-
     
 
 class PokeTeam:
@@ -127,7 +98,7 @@ class PokeTeam:
                 print("Please enter a string")
                 continue
             pokemon_class = self.find_pokemon_class(target_name)
-            self.team[i] = pokemon_class
+            self.team[i] = pokemon_class()
             self.team_count += 1
 
 
@@ -147,6 +118,9 @@ class PokeTeam:
             if full_health_class:
             # Update the health to the full health as defined in the class
                 pokemon.health = full_health_class().health
+        self.assemble_team(battle_mode)
+        if battle_mode == 2:
+            self.assign_team(criterion)
 
 
     #This function assigns the order of the team based on the criterion list.
@@ -162,11 +136,15 @@ class PokeTeam:
         # Add each ListItem back to the team, now sorted by the new criterion
         for j in range(self.team_count):
             self.team.add(temp_list[j])
+
     #This function assembles the team based on the battle_mode selected.
     #Each battle_mode has different data structures.
     def assemble_team(self, battle_mode: BattleMode) -> None:
         if battle_mode == 0:
-            None
+            temp_stack = ArrayStack(self.TEAM_LIMIT)
+            # Add each Pokémon in self.team to the stack
+            for pokemon in self.team:
+                temp_stack.push(pokemon)
         elif battle_mode == 1:
             self.circular_queue = CircularQueue(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the circular queue
@@ -183,7 +161,21 @@ class PokeTeam:
     #Rotate Mode reverses the second half of the team
     #Optimise mode it reverses the other, either ascending to descending or descending to ascending order.
     def special(self, battle_mode: BattleMode) -> None:
-        raise NotImplementedError
+        if battle_mode == 0:
+            temp_stack = ArrayStack(len(self.array_stack) // 2)
+            print(temp_stack)
+            for _ in range(len(self.array_stack) // 2):
+                temp_stack.push(self.array_stack.pop())
+                print(temp_stack)
+            
+            for _ in range(len(self.team) // 2):
+                self.team.push(temp_stack.pop())
+            
+        elif battle_mode == 1:
+            pass
+        elif battle_mode == 2:
+            pass
+
 
     def __getitem__(self, index: int):
         """ Returns the object in position index.
@@ -293,6 +285,7 @@ print("Pokédex after registering Zapdos:", trainer.pokedox)
 print(trainer)
 
 '''
+'''
 #circular que.
 team = PokeTeam()
 print(team)
@@ -302,3 +295,19 @@ print(team)
 print("\n")
 team.assemble_team(1)
 print(team)
+
+'''
+
+#array_stack testing
+team = PokeTeam()
+print(team)
+print("\n")
+team.choose_randomly()
+print(team)
+print("\n")
+team.assemble_team(0)
+print(team)
+team.special(0)
+print("\n")
+print(team)
+

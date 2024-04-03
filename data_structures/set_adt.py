@@ -66,3 +66,4 @@ class Set(ABC, Generic[T]):
     def difference(self, other: Set[T]) -> Set[T]:
         """ Creates a difference of the set with another set. """
         pass
+    
