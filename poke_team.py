@@ -245,13 +245,13 @@ class PokeTeam:
         ret_str = "["
         if isinstance(self.team, ArrayStack):
             for i in range(len(self.team.array)):
-                ret_str += "(" + str(self.team.array[i]) + "), "
+                ret_str += "(" + str(self.team.array[i]) + "), \n"
         elif isinstance(self.team, ArraySortedList):
             for i in range(len(self.team.array)):
-                ret_str += "(" + str(self.team.array[i]) + "), "
+                ret_str += "(" + str(self.team.array[i]) + "), \n "
         elif isinstance(self.team, CircularQueue):
             for i in range(len(self.team.array)):
-                ret_str += "(" + str(self.team.array[i]) + "), "
+                ret_str += "(" + str(self.team.array[i]) + "), \n"
         else:
             # Handle other cases here
             for pokemon in self.team:
@@ -362,7 +362,7 @@ team.assemble_team(1)
 print(team)
 
 '''
-
+'''
 #array_stack testing
 team = PokeTeam()
 print(team)
@@ -373,9 +373,14 @@ print("\n")
 print('Assembled Team')
 team.assemble_team(2)
 
-team.assign_team('speed')
+team.assign_team('health')
 print(team)
 
-team.special(2)
+team.special(2) #ascending order
 print("\n")
 print(team)
+
+team.special(2) #descending order
+print("\n")
+print(team)
+'''
