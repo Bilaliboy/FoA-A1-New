@@ -28,14 +28,14 @@ class ArraySet(Set[T]):
     #O(1)
     def is_full(self) -> bool:
         return len(self) == len(self.array)
-    
+
     #time complexity is O(N*Comp==) where N is the size of set. best case is O(1).
     def __contains__(self, item: T) -> bool:
         for i in range(self.size):
             if item == self.array[i]:
                 return True
         return False
-    
+
     #time complexity is O(N * Comp==) best case O(1).
     def remove(self, item: T) -> None:
         for i in range(self.size):
@@ -45,10 +45,10 @@ class ArraySet(Set[T]):
                 break
         else:
             raise KeyError(item)
-        
+
     def __str__(self):
         return ", ".join(str(item) for item in self.array if item is not None)
-    
+
     #time complexity is O(N * Comp==) and best case is O(1).
     def add(self, item: T) -> None:
         if item not in self:
@@ -56,7 +56,7 @@ class ArraySet(Set[T]):
                 raise Exception("Set is full")
         self.array[self.size] = item
         self.size += 1
-        
+
     def union(self, other: Set[T]) -> Set[T]:
         """ Makes a union of the set with another set. """
         pass
@@ -69,7 +69,7 @@ class ArraySet(Set[T]):
         """ Creates a difference of the set with another set. """
         pass
 
-    
+
 
 class PokeTeam:
     TEAM_LIMIT = 6
@@ -79,6 +79,7 @@ class PokeTeam:
     def __init__(self):
         self.team = ArrayR(self.TEAM_LIMIT)
         self.team_count = 0
+        self.descending = False
 
 #How to find pokemon in pokeType.
     #Timecomplexity is O(Comp==) best case and O(n * Comp==) for worst case. Where n is the pokemon classes.
@@ -129,10 +130,11 @@ class PokeTeam:
         temp_list = ArraySortedList(self.TEAM_LIMIT)
         for j in range(self.team_count):
             pokemon = self.team[j]
-            key = pokemon.get__attribute__by__criteria(criterion)
-            temp_list.add(ListItem(key=key, value=pokemon))
+            key = pokemon.value.get__attribute__by__criteria(criterion)
+            temp_list.add(ListItem(key=key, value=pokemon.value))
         # Clear the current team to repopulate it
         self.team.reset()
+
         # Add each ListItem back to the team, now sorted by the new criterion
         for j in range(self.team_count):
             self.team.add(temp_list[j])
@@ -141,30 +143,26 @@ class PokeTeam:
     #Each battle_mode has different data structures.
     def assemble_team(self, battle_mode: BattleMode) -> None:
         if battle_mode == 0:
-
             temp_team = ArrayStack(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the stack
             for pokemon in range(len(self.team)):
                 temp_team.push(self.team[pokemon])
 
             self.team = temp_team.copy()
-
         elif battle_mode == 1:
-            temp_team_2 = CircularQueue(self.TEAM_LIMIT)
-            temp = CircularQueue(self.TEAM_LIMIT)
+            circular_queue = CircularQueue(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the circular queue
             for pokemon in self.team:
-                temp_team_2.append(pokemon)
-            temp_team_2.print_items()
-            print("\n")
-            self.team = CircularQueue(self.TEAM_LIMIT)
-            self.team = temp_team_2
-            #print(self.team)
+                circular_queue.append(pokemon)
+            self.team = circular_queue
         #Optimised Mode
         elif battle_mode == 2:
-            self.team = ArraySortedList(self.TEAM_LIMIT)
+            sorted_list = ArraySortedList(self.TEAM_LIMIT)
 
-
+            for pokemon in self.team:
+                key = pokemon.get__attribute__by__criteria('health')
+                sorted_list.add(ListItem(key=key, value=pokemon))
+            self.team = sorted_list
 
 
     #SET Mode Reverses the first half of the team
@@ -172,8 +170,8 @@ class PokeTeam:
     #Optimise mode it reverses the other, either ascending to descending or descending to ascending order.
     def special(self, battle_mode: BattleMode) -> None:
         if battle_mode == 0:
-            temp_stack1 = ArrayStack(len(self.team))  
-            temp_stack2 = ArrayStack(len(self.team))  
+            temp_stack1 = ArrayStack(len(self.team))
+            temp_stack2 = ArrayStack(len(self.team))
 
             half_length = len(self.team)// 2
 
@@ -189,29 +187,35 @@ class PokeTeam:
                 self.team.push(temp_stack1.pop())
 
         elif battle_mode == 1:
-            q_length = len(self.team)   #q length example 6
-            half_point = q_length // 2  #half point example 3
+            q_length = len(self.team)
+            half_point = q_length // 2
 
-            first_half_size = half_point            #first half size = 3
-            second_half_size = q_length - half_point    #6-3 example
+            first_half_size = half_point
+            second_half_size = q_length - half_point
 
-            first_half = ArrayR(first_half_size)        #first half array
-            second_half = ArrayR(second_half_size)      #second half array
+            first_half = ArrayR(first_half_size)
+            second_half = ArrayR(second_half_size)
 
-            for i in range(first_half_size):        
-                first_half[i] = self.team.serve()       #serves first half [1,2,3] example
+            for i in range(first_half_size):
+                first_half[i] = self.team.serve()
 
-            for i in range(second_half_size):       #serves second half [4,5,6]
+            for i in range(second_half_size):
                 second_half[i] = self.team.serve()
 
-            for i in range(first_half_size):        
-                self.team.append(first_half[i])     #self.team = [1,2,3]
+            for i in range(first_half_size):
+                self.team.append(first_half[i])
 
-            for i in range(second_half_size-1,-1,-1): # itterate second hal array [4,5,6] in reverse order.
-                self.team.append(second_half[i])      # final will be [1,2,3,6,5,4]
-            
+            for i in range(second_half_size-1,-1,-1):
+                self.team.append(second_half[i])
+
         elif battle_mode == 2:
-            pass
+            self.descending = not self.descending
+            temp_list = ArraySortedList(self.TEAM_LIMIT, self.descending)
+
+            for i in range(len(self.team)):
+                temp_list.add(self.team[i])
+
+            self.team = temp_list
 
 
     def __getitem__(self, index: int):
@@ -240,28 +244,25 @@ class PokeTeam:
     def __str__(self):
         ret_str = "["
         if isinstance(self.team, ArrayStack):
-            temp_stack = self.team.copy()
-            for j in range(len(self.team)):
-                pokemon = temp_stack.pop()
-                ret_str += "(" + str(pokemon) + "), \n "
+            for i in range(len(self.team.array)):
+                ret_str += "(" + str(self.team.array[i]) + "), "
         elif isinstance(self.team, ArraySortedList):
             for i in range(len(self.team.array)):
                 ret_str += "(" + str(self.team.array[i]) + "), "
         elif isinstance(self.team, CircularQueue):
             for i in range(len(self.team.array)):
-                ret_str += "(" + str(self.team.array[i]) + "),\n "
+                ret_str += "(" + str(self.team.array[i]) + "), "
         else:
             # Handle other cases here
             for pokemon in self.team:
                 ret_str += "(" + str(pokemon) + "),\n"
             ret_str = ret_str[:-2]  # Remove the trailing comma and space
-            
+            pass
 
-        
-        return ret_str + "]"
-
-
-
+        if ret_str.endswith(", "):
+            ret_str = ret_str[:-2]  # Remove the trailing comma and space
+        ret_str += "]"
+        return ret_str
 
 class Trainer:
 
@@ -302,17 +303,17 @@ class Trainer:
         return f"Trainer {self.name} Pokedex Completion: {precent_completion}%"
 
 
-"""	
+"""
 if __name__ == '__main__':
     t = Trainer('Ash')
     print(t)
     t.pick_team("Random")
     print(t)
     print(t.get_team())
-    
-"""	
 
-"""	
+"""
+
+"""
 Bug fixes for optimised mode
 
 team = PokeTeam()
@@ -324,7 +325,7 @@ team.assign_team("health")
 print(team)
 """
 
-'''	
+'''
 
 Bug fixes for registering pokemon in pokedex.
 
@@ -349,7 +350,7 @@ print("Pokédex after registering Zapdos:", trainer.pokedox)
 print(trainer)
 
 '''
-
+'''
 #circular que.
 team = PokeTeam()
 print(team)
@@ -359,14 +360,9 @@ print(team)
 print("\n")
 team.assemble_team(1)
 print(team)
-print("\n")
-team.special(1)
-print(team)
-
-
-
 
 '''
+
 #array_stack testing
 team = PokeTeam()
 print(team)
@@ -374,13 +370,12 @@ print("\n")
 team.choose_randomly()
 print(team)
 print("\n")
-team.assemble_team(0)
+print('Assembled Team')
+team.assemble_team(2)
+
+team.assign_team('speed')
 print(team)
 
-print("\n")
-print(len(team))
-
-team.special(0)
+team.special(2)
 print("\n")
 print(team)
-'''

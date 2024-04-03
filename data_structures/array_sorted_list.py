@@ -13,7 +13,7 @@ class ArraySortedList(SortedList[T]):
     """ SortedList ADT implemented with arrays. """
     MIN_CAPACITY = 1
 
-    def __init__(self, max_capacity: int) -> None:
+    def __init__(self, max_capacity: int, descending=False) -> None:
         """ ArraySortedList object initialiser. """
 
         # first, calling the basic initialiser
@@ -22,6 +22,7 @@ class ArraySortedList(SortedList[T]):
         # initialising the internal array
         size = max(self.MIN_CAPACITY, max_capacity)
         self.array = ArrayR(size)
+        self.descending = descending        #descending variable.
 
     def reset(self):
         """ Reset the list. """
@@ -35,19 +36,34 @@ class ArraySortedList(SortedList[T]):
         """ Magic method. Insert the item at a given position,
             if possible (!). Shift the following elements to the right.
         """
-        if self.is_empty() or \
-                (index == 0 and item.key <= self[index].key) or \
-                (index == len(self) and self[index - 1].key <= item.key) or \
-                (index > 0 and self[index - 1].key <= item.key <= self[index].key):
+        if(not self.descending):
+            if self.is_empty() or \
+                    (index == 0 and item.key <= self[index].key) or \
+                    (index == len(self) and self[index - 1].key <= item.key) or \
+                    (index > 0 and self[index - 1].key <= item.key <= self[index].key):
 
-            if self.is_full():
-                self._resize()
+                if self.is_full():
+                    self._resize()
 
-            self._shuffle_right(index)
-            self.array[index] = item
+                self._shuffle_right(index)
+                self.array[index] = item
+            else:
+                # the list isn't empty and the item's position is wrong wrt. its neighbours
+                raise IndexError('Element should be inserted in sorted order')
         else:
-            # the list isn't empty and the item's position is wrong wrt. its neighbours
-            raise IndexError('Element should be inserted in sorted order')
+            if self.is_empty() or \
+                    (index == 0 and item.key >= self[index].key) or \
+                    (index == len(self) and self[index - 1].key >= item.key) or \
+                    (index > 0 and self[index - 1].key >= item.key >= self[index].key):
+
+                if self.is_full():
+                    self._resize()
+
+                self._shuffle_right(index)
+                self.array[index] = item
+            else:
+                # the list isn't empty and the item's position is wrong wrt. its neighbours
+                raise IndexError('Element should be inserted in sorted order')
 
     def __contains__(self, item: ListItem):
         """ Checks if value is in the list. """
@@ -110,15 +126,17 @@ class ArraySortedList(SortedList[T]):
         self.length += 1
 
     def _index_to_add(self, item: ListItem) -> int:
-        """ Find the position where the new item should be placed. """
+        """Find the position where the new item should be placed, considering the sorting order."""
         low = 0
         high = len(self) - 1
 
         while low <= high:
             mid = (low + high) // 2
-            if self[mid].key < item.key:
+            if (not self.descending and self[mid].key < item.key) or \
+            (self.descending and self[mid].key > item.key):
                 low = mid + 1
-            elif self[mid].key > item.key:
+            elif (not self.descending and self[mid].key > item.key) or \
+                (self.descending and self[mid].key < item.key):
                 high = mid - 1
             else:
                 return mid
