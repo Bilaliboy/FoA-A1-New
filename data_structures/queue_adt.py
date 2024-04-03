@@ -98,6 +98,28 @@ class CircularQueue(Queue[T]):
         Queue.__init__(self)
         self.front = 0
         self.rear = 0
+    
+    def print_items(self) -> None:
+        index = self.front
+        for _ in range(len(self)):
+            print(self.array[index])
+            index = (index + 1) % len(self.array)
+'''	   
+    def __str__(self) -> str:
+        ret_str = "["
+        if self.front <= self.rear:
+            for i in range(self.front, self.rear):
+                ret_str += str(self.array[i]) + ", "
+        else:
+            for i in range(self.front, len(self.array)):
+                ret_str += str(self.array[i]) + ", "
+            for i in range(0, self.rear):
+                ret_str += str(self.array[i]) + ", "
+
+        ret_str = ret_str[:-2]  # Remove the trailing comma and space
+        ret_str += "]"
+        return ret_str
+'''	
 
 
 class TestQueue(unittest.TestCase):
