@@ -189,18 +189,27 @@ class PokeTeam:
                 self.team.push(temp_stack1.pop())
 
         elif battle_mode == 1:
-            temp_queue1 = CircularQueue(len(self.team))
-            temp_stack1 = ArrayStack(len(self.team))
+            q_length = len(self.team)   #q length example 6
+            half_point = q_length // 2  #half point example 3
+
+            first_half_size = half_point            #first half size = 3
+            second_half_size = q_length - half_point    #6-3 example
+
+            first_half = ArrayR(first_half_size)        #first half array
+            second_half = ArrayR(second_half_size)      #second half array
+
+            for i in range(first_half_size):        
+                first_half[i] = self.team.serve()       #serves first half [1,2,3] example
+
+            for i in range(second_half_size):       #serves second half [4,5,6]
+                second_half[i] = self.team.serve()
+
+            for i in range(first_half_size):        
+                self.team.append(first_half[i])     #self.team = [1,2,3]
+
+            for i in range(second_half_size-1,-1,-1): # itterate second hal array [4,5,6] in reverse order.
+                self.team.append(second_half[i])      # final will be [1,2,3,6,5,4]
             
-            half_length = len(self.team)// 2
-    
-            for _ in range(half_length):
-                #temp
-                temp_queue1.append(self.team.serve)
-                print(temp_queue1)
-            while not self.team.is_empty():
-                temp_stack1.push(self.team.serve())
-                print(temp_stack1)
         elif battle_mode == 2:
             pass
 
@@ -351,6 +360,8 @@ print("\n")
 team.assemble_team(1)
 print(team)
 print("\n")
+team.special(1)
+print(team)
 
 
 
