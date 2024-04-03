@@ -77,7 +77,7 @@ class PokeTeam:
     CRITERION_LIST = ["health", "defence", "battle_power", "speed", "level"]
 
     def __init__(self):
-        self.team = [None] * self.TEAM_LIMIT
+        self.team = ArrayR(self.TEAM_LIMIT)
         self.team_count = 0
 
 #How to find pokemon in pokeType.
@@ -144,7 +144,7 @@ class PokeTeam:
             self.team = ArrayStack(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the stack
             for pokemon in range(len(self.team)):
-                self.team.push(self.team.array[pokemon])
+                self.team.push(pokemon)
         elif battle_mode == 1:
             self.circular_queue = CircularQueue(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the circular queue
@@ -201,12 +201,14 @@ class PokeTeam:
         ret_str = ret_str[:-2] + "]"
         return ret_str
     '''	
+    ''''''
     def __str__(self):
         ret_str = "["
         if isinstance(self.team, ArrayStack):
-            while not self.team.is_empty():
+            for pokemon in self.team:
                 pokemon = self.team.pop()
                 ret_str += "(" + str(pokemon) + "), "
+            ret_str += "]"
         elif isinstance(self.team, ArraySortedList):
             for i in range(len(self.team.array)):
                 ret_str += "(" + str(self.team.array[i]) + "), "
@@ -218,6 +220,7 @@ class PokeTeam:
             for pokemon in self.team:
                 ret_str += "(" + str(pokemon) + "),\n"
             ret_str = ret_str[:-2]  # Remove the trailing comma and space
+            pass
         
         if ret_str.endswith(", "):
             ret_str = ret_str[:-2]  # Remove the trailing comma and space
