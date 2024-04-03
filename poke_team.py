@@ -141,10 +141,10 @@ class PokeTeam:
     #Each battle_mode has different data structures.
     def assemble_team(self, battle_mode: BattleMode) -> None:
         if battle_mode == 0:
-            temp_stack = ArrayStack(self.TEAM_LIMIT)
+            self.team = ArrayStack(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the stack
-            for pokemon in self.team:
-                temp_stack.push(pokemon)
+            for pokemon in range(len(self.team)):
+                self.team.push(self.team.array[pokemon])
         elif battle_mode == 1:
             self.circular_queue = CircularQueue(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the circular queue
@@ -162,11 +162,13 @@ class PokeTeam:
     #Optimise mode it reverses the other, either ascending to descending or descending to ascending order.
     def special(self, battle_mode: BattleMode) -> None:
         if battle_mode == 0:
-            temp_stack = ArrayStack(len(self.array_stack) // 2)
+            temp_stack = ArrayStack(len(self.team) // 2)
             print(temp_stack)
-            for _ in range(len(self.array_stack) // 2):
-                temp_stack.push(self.array_stack.pop())
+            print("\n")
+            for i in range(len(self.team) // 2):
+                temp_stack.push(self.team[i])
                 print(temp_stack)
+                print("\n")
             
             for _ in range(len(self.team) // 2):
                 self.team.push(temp_stack.pop())
@@ -190,14 +192,40 @@ class PokeTeam:
         """
         return len(self.team)
 
+    '''
     def __str__(self):
         ret_str = "["
         for i, item in enumerate(self.team):
             ret_str += str(item)
-            ret_str += ", "
-        
+            ret_str += ", " 
         ret_str = ret_str[:-2] + "]"
         return ret_str
+    '''	
+    def __str__(self):
+        ret_str = "["
+        if isinstance(self.team, ArrayStack):
+            while not self.team.is_empty():
+                pokemon = self.team.pop()
+                ret_str += "(" + str(pokemon) + "), "
+        elif isinstance(self.team, ArraySortedList):
+            for i in range(len(self.team.array)):
+                ret_str += "(" + str(self.team.array[i]) + "), "
+        elif isinstance(self.team, CircularQueue):
+            for i in range(len(self.team.array)):
+                ret_str += "(" + str(self.team.array[i]) + "), "
+        else:
+            # Handle other cases here
+            for pokemon in self.team:
+                ret_str += "(" + str(pokemon) + "),\n"
+            ret_str = ret_str[:-2]  # Remove the trailing comma and space
+        
+        if ret_str.endswith(", "):
+            ret_str = ret_str[:-2]  # Remove the trailing comma and space
+        ret_str += "]"
+        return ret_str
+
+
+
 
 class Trainer:
 
@@ -307,6 +335,7 @@ print(team)
 print("\n")
 team.assemble_team(0)
 print(team)
+
 team.special(0)
 print("\n")
 print(team)
