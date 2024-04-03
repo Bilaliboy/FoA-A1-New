@@ -303,7 +303,7 @@ class Trainer:
         return f"Trainer {self.name} Pokedex Completion: {precent_completion}%"
 
 
-"""
+
 if __name__ == '__main__':
     t = Trainer('Ash')
     print(t)
@@ -311,7 +311,7 @@ if __name__ == '__main__':
     print(t)
     print(t.get_team())
 
-"""
+
 
 """
 Bug fixes for optimised mode
