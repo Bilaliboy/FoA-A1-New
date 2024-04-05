@@ -147,8 +147,6 @@ class PokeTeam:
             # Add each Pokémon in self.team to the stack
             for pokemon in range(len(self.team)):
                 temp_team.push(self.team[pokemon])
-                print(team)
-                print("\n")
 
             self.team = temp_team.copy()
         elif battle_mode == BattleMode.ROTATE:
@@ -350,8 +348,12 @@ print(team)
 print("\n")
 team.assemble_team(BattleMode.ROTATE)
 print(team)
-
+team.special(BattleMode.ROTATE)
+print("\n")
+print(team)`
 '''
+
+
 '''	
 #Optimised Mode testing
 team = PokeTeam()
@@ -375,7 +377,7 @@ print("\n")
 print(team)
 '''	
 
-
+'''
 #SET Mode testing
 team = PokeTeam()
 team.choose_randomly()
@@ -389,4 +391,4 @@ print(team)
 print("\n")
 team.special(BattleMode.SET)
 print(team)
-
+'''
