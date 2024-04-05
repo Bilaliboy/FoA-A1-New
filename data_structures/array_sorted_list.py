@@ -1,4 +1,4 @@
-"""
+""""
     Array-based implementation of SortedList ADT.
     Items to store should be of time ListItem.
 """
@@ -22,7 +22,7 @@ class ArraySortedList(SortedList[T]):
         # initialising the internal array
         size = max(self.MIN_CAPACITY, max_capacity)
         self.array = ArrayR(size)
-        self.descending = descending        #descending variable.
+        self.descending = descending
 
     def reset(self):
         """ Reset the list. """
@@ -33,37 +33,58 @@ class ArraySortedList(SortedList[T]):
         return self.array[index]
 
     def __setitem__(self, index: int, item: ListItem) -> None:
-        """ Magic method. Insert the item at a given position,
-            if possible (!). Shift the following elements to the right.
         """
-        if(not self.descending):
+        Override the item assignment method to insert an item at a specified index,
+        shifting subsequent elements to the right to maintain order. This method ensures
+        that the insertion respects the sorted order of the list, whether it's ascending or descending.
+
+        Args:
+            index (int): The position at which to insert the item.
+            item (ListItem): The item to insert.
+
+        Raises:
+            IndexError: If attempting to insert the item would violate the list's sorted order.
+        """
+        # Handle the ascending order scenario
+        if not self.descending:
+            # Make sure the item being inserted is being inserted so that the list remains sorted
             if self.is_empty() or \
                     (index == 0 and item.key <= self[index].key) or \
                     (index == len(self) and self[index - 1].key <= item.key) or \
                     (index > 0 and self[index - 1].key <= item.key <= self[index].key):
 
+                # If the list is full before the insertion, increase its capacity.
                 if self.is_full():
                     self._resize()
 
+                # Shift elements to the right to make room for the new item.
                 self._shuffle_right(index)
+                # Insert the new item at the specified index.
                 self.array[index] = item
             else:
-                # the list isn't empty and the item's position is wrong wrt. its neighbours
+                # If the insertion would violate the sorted order, raise an error.
                 raise IndexError('Element should be inserted in sorted order')
+
+        # Handle the descending order scenario
         else:
+           # Make sure the item being inserted is being inserted so that the list remains sorted
             if self.is_empty() or \
                     (index == 0 and item.key >= self[index].key) or \
                     (index == len(self) and self[index - 1].key >= item.key) or \
                     (index > 0 and self[index - 1].key >= item.key >= self[index].key):
 
+                # If the list is full before the insertion, increase its capacity.
                 if self.is_full():
                     self._resize()
 
+                # Shift elements to the right to make room for the new item.
                 self._shuffle_right(index)
+                # Insert the new item at the specified index.
                 self.array[index] = item
             else:
-                # the list isn't empty and the item's position is wrong wrt. its neighbours
+                # If the insertion would violate the sorted order, raise an error.
                 raise IndexError('Element should be inserted in sorted order')
+
 
     def __contains__(self, item: ListItem):
         """ Checks if value is in the list. """
@@ -126,19 +147,43 @@ class ArraySortedList(SortedList[T]):
         self.length += 1
 
     def _index_to_add(self, item: ListItem) -> int:
-        """Find the position where the new item should be placed, considering the sorting order."""
+        """
+        Find the position where the new item should be placed in the sorted list,
+        taking into account whether the list is sorted in ascending or descending order.
+
+        Args:
+            item (ListItem): The item to be added to the list.
+
+        Returns:
+            int: The index at which the new item should be inserted to maintain the sorted order.
+        """
+
+        # Initialize the lower and upper bounds of the search space
         low = 0
         high = len(self) - 1
 
+        # Binary search to find the correct insertion index for 'item'
         while low <= high:
+            # Calculate the midpoint for the current search space
             mid = (low + high) // 2
+
+            # Case for ascending order and 'item' key is greater than 'mid' key,
+            # or descending order and 'item' key is less than 'mid' key.
+            # This means 'item' should be placed after 'mid', so adjust 'low' to narrow the search space.
             if (not self.descending and self[mid].key < item.key) or \
             (self.descending and self[mid].key > item.key):
                 low = mid + 1
+
+            # Case for ascending order and 'item' key is less than 'mid' key,
+            # or descending order and 'item' key is greater than 'mid' key.
+            # This means 'item' should be placed before 'mid', so adjust 'high' to narrow the search space.
             elif (not self.descending and self[mid].key > item.key) or \
                 (self.descending and self[mid].key < item.key):
                 high = mid - 1
+
+            # If 'item' key is equal to the 'mid' key, return 'mid' as the correct insertion index.
             else:
                 return mid
 
+        # If the loop exits without finding an exact match, 'low' will be the correct insertion index.
         return low
