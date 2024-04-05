@@ -4,18 +4,112 @@ from typing import Tuple
 from battle_mode import BattleMode
 
 class Battle:
-
     def __init__(self, trainer_1: Trainer, trainer_2: Trainer, battle_mode: BattleMode, criterion = "health") -> None:
         self.trainer_1 = trainer_1
         self.trainer_2 = trainer_2
         self.battle_mode = battle_mode
         self.criterion = criterion
-
+    
     def commence_battle(self) -> Trainer | None:
         raise NotImplementedError
 
     def _create_teams(self) -> None:
-        raise NotImplementedError
+        #Trainer 1 picks team randomly or manually
+        while True:
+            #Validate to make sure they pick a team.
+            try:
+                trainer_1_pick = int(input("Pick your team trainer 1:\n Random (1) \n Manual (2) \n Enter corresponding number: "))
+                if trainer_1_pick == 1 or trainer_1_pick == 2:
+                    break  # Exit the loop if input is valid
+                else:
+                    print("Please enter either 1 or 2")
+            except ValueError:
+                print("Please enter a number (1 or 2)")
+        
+        #Trainer 2 picks team randomly or manually
+        while True:
+            #Validate to make sure they pick a team.
+            try:
+                trainer_2_pick = int(input("Pick your team trainer 2:\n Random (1) \n Manual (2) \n Enter corresponding number: "))
+                if trainer_2_pick == 1 or trainer_2_pick == 2:
+                    break  # Exit the loop if input is valid
+                else:
+                    print("Please enter either 1 or 2")
+            except ValueError:
+                print("Please enter a number (1 or 2)")
+        
+        #If trainer 1 picks random method
+        if trainer_1_pick == 1:
+            self.trainer_1.pick_team("Random")
+
+            #Assemble the team based on battle mode selected. Check for battle Mode selected.
+            if self.battle_mode == BattleMode.SET:
+                self.trainer_1.team.assemble_team(battle_mode=BattleMode.SET)
+            elif self.battle_mode == BattleMode.ROTATE:
+                self.trainer_1.team.assemble_team(battle_mode=BattleMode.ROTATE)
+            elif self.battle_mode == BattleMode.OPTIMISE:
+                try:
+                    #asks user to select a criteria.
+                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                except ValueError:
+                    print("Please enter a string")     
+                self.trainer_1.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
+                self.trainer_1.team.assign_team(criteria)   #Assign team based on criteria selected
+        
+        #If trainer 1 picks manual method
+        elif trainer_1_pick == 2:
+            self.trainer_1.pick_team("Manual")
+            #Assemble the team based on battle mode selected. Check for battle Mode selected.
+            if self.battle_mode == BattleMode.SET:
+                self.trainer_1.team.assemble_team(battle_mode=BattleMode.SET)
+            elif self.battle_mode == BattleMode.ROTATE:
+                self.trainer_1.team.assemble_team(battle_mode=BattleMode.ROTATE)
+            elif self.battle_mode == BattleMode.OPTIMISE:
+                try:
+                    #asks user to select a criteria.
+                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                except ValueError:
+                    print("Please enter a string")
+                self.trainer_1.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
+                self.trainer_1.team.assign_team(criteria)   #Assign team based on criteria selected
+
+        #If trainer 2 picks random method.
+        if trainer_2_pick == 1:
+            self.trainer_2.pick_team("Random")
+
+            #Assemble the team based on battle mode selected. Check for battle Mode selected.
+            if self.battle_mode == BattleMode.SET:
+                self.trainer_2.team.assemble_team(battle_mode=BattleMode.SET)
+            elif self.battle_mode == BattleMode.ROTATE:
+                self.trainer_2.team.assemble_team(battle_mode=BattleMode.ROTATE)
+            elif self.battle_mode == BattleMode.OPTIMISE:
+                try:
+                    #asks user to select a criteria.
+                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                except ValueError:
+                    print("Please enter a string")     
+                self.trainer_2.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
+                self.trainer_2.team.assign_team(criteria)   #Assign team based on criteria selected
+
+        #If trainer 2 picks Manual method.
+        elif trainer_2_pick == 2:
+            self.trainer_2.pick_team("Manual")
+            #Assemble the team based on battle mode selected. Check for battle Mode selected.
+            if self.battle_mode == BattleMode.SET:
+                self.trainer_2.team.assemble_team(battle_mode=BattleMode.SET)
+            elif self.battle_mode == BattleMode.ROTATE:
+                self.trainer_2.team.assemble_team(battle_mode=BattleMode.ROTATE)
+            elif self.battle_mode == BattleMode.OPTIMISE:
+                try:
+                    #asks user to select a criteria.
+                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                except ValueError:
+                    print("Please enter a string")
+                self.trainer_2.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
+                self.trainer_2.team.assign_team(criteria)   #Assign team based on criteria selected
+
+            
+
 
     # Note: These are here for your convenience
     # If you prefer you can ignore them
@@ -45,14 +139,37 @@ class Battle:
                 # Perform simultaneous attacks, if speed is same.
                 damage_to_p2 = pokemon1.attack(pokemon2)
                 damage_to_p1 = pokemon2.attack(pokemon1)
-            pokemon1.defend(damage_to_p2)
-            pokemon2.defend(damage_to_p1)
+                pokemon1.defend(damage_to_p2)
+                pokemon2.defend(damage_to_p1)
             # If both Pokémon are still alive, the defender counterattacks
             if pokemon1.is_alive() and pokemon2.is_alive():
                 # Let's decide that pokemon1 was the initial attacker for simplicity,
                 # and thus pokemon2 gets to counterattack
                 counter_damage_to_p1 = pokemon2.attack(pokemon1)
                 pokemon1.defend(counter_damage_to_p1)
+            
+            # Check for fainting
+            
+            #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and returns to back of queue.
+            if pokemon1.is_alive() and not pokemon2.is_alive():
+                pokemon1.level_up()
+                self.trainer_1.team.append(pokemon1)
+            #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and returns to back of queue.
+            elif pokemon2.is_alive() and not pokemon1.is_alive():
+                pokemon2.level_up()
+                self.trainer_2.team.append(pokemon2)
+            #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
+            else:
+                pokemon1.defend(-1) #pokemon1.health -=1
+                pokemon2.defend(-1) #pokemon2.health -=1
+            # Determine the winner
+            if self.trainer1.team.is_empty():
+                return self.trainer2
+            elif self.trainer2.team.is_empty():
+                return self.trainer1
+            else:
+                return None # In case of a draw, though this shouldn't happen in rotate mode
+
     
     #In the optimised mode. User picks a stat to order their team.The initial order will be maintained even if a certain stat decreases.
     #The stats are stored in the criterion list in task 2.

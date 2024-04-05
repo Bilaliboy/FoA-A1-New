@@ -130,7 +130,7 @@ class PokeTeam:
         temp_list = ArraySortedList(self.TEAM_LIMIT)
         for j in range(self.team_count):
             pokemon = self.team[j]
-            key = pokemon.value.get__attribute__by__criteria(criterion)
+            key = pokemon.value.get__attribute__by__criteria(criterion) #method made in pokemon_base.py
             temp_list.add(ListItem(key=key, value=pokemon.value))
         # Clear the current team to repopulate it
         self.team.reset()
@@ -142,21 +142,23 @@ class PokeTeam:
     #This function assembles the team based on the battle_mode selected.
     #Each battle_mode has different data structures.
     def assemble_team(self, battle_mode: BattleMode) -> None:
-        if battle_mode == 0:
+        if battle_mode == BattleMode.SET:
             temp_team = ArrayStack(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the stack
             for pokemon in range(len(self.team)):
                 temp_team.push(self.team[pokemon])
+                print(team)
+                print("\n")
 
             self.team = temp_team.copy()
-        elif battle_mode == 1:
+        elif battle_mode == BattleMode.ROTATE:
             circular_queue = CircularQueue(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the circular queue
             for pokemon in self.team:
                 circular_queue.append(pokemon)
             self.team = circular_queue
         #Optimised Mode
-        elif battle_mode == 2:
+        elif battle_mode == BattleMode.OPTIMISE:
             sorted_list = ArraySortedList(self.TEAM_LIMIT)
 
             for pokemon in self.team:
@@ -169,7 +171,7 @@ class PokeTeam:
     #Rotate Mode reverses the second half of the team
     #Optimise mode it reverses the other, either ascending to descending or descending to ascending order.
     def special(self, battle_mode: BattleMode) -> None:
-        if battle_mode == 0:
+        if battle_mode == BattleMode.SET:
             temp_stack1 = ArrayStack(len(self.team))
             temp_stack2 = ArrayStack(len(self.team))
 
@@ -186,7 +188,7 @@ class PokeTeam:
             while not temp_stack1.is_empty():
                 self.team.push(temp_stack1.pop())
 
-        elif battle_mode == 1:
+        elif battle_mode == BattleMode.ROTATE:
             q_length = len(self.team)
             half_point = q_length // 2
 
@@ -208,7 +210,7 @@ class PokeTeam:
             for i in range(second_half_size-1,-1,-1):
                 self.team.append(second_half[i])
 
-        elif battle_mode == 2:
+        elif battle_mode == BattleMode.OPTIMISE:
             self.descending = not self.descending
             temp_list = ArraySortedList(self.TEAM_LIMIT, self.descending)
 
@@ -302,7 +304,7 @@ class Trainer:
         precent_completion = int(self.get_pokedex_completion() * 100)
         return f"Trainer {self.name} Pokedex Completion: {precent_completion}%"
 
-
+'''	
 
 if __name__ == '__main__':
     t = Trainer('Ash')
@@ -311,22 +313,10 @@ if __name__ == '__main__':
     print(t)
     print(t.get_team())
 
+'''	
 
-
-"""
-Bug fixes for optimised mode
-
-team = PokeTeam()
-team.assemble_team(2)
-team.choose_randomly()
-print(team)
-print("\n")
-team.assign_team("health")
-print(team)
-"""
 
 '''
-
 Bug fixes for registering pokemon in pokedex.
 
 trainer = Trainer('Ash')
@@ -351,19 +341,19 @@ print(trainer)
 
 '''
 '''
-#circular que.
+#circular que. Test.
 team = PokeTeam()
 print(team)
 print("\n")
 team.choose_randomly()
 print(team)
 print("\n")
-team.assemble_team(1)
+team.assemble_team(BattleMode.ROTATE)
 print(team)
 
 '''
-'''
-#array_stack testing
+'''	
+#Optimised Mode testing
 team = PokeTeam()
 print(team)
 print("\n")
@@ -371,16 +361,32 @@ team.choose_randomly()
 print(team)
 print("\n")
 print('Assembled Team')
-team.assemble_team(2)
+team.assemble_team(BattleMode.OPTIMISE)
 
 team.assign_team('health')
 print(team)
 
-team.special(2) #ascending order
+team.special(BattleMode.OPTIMISE) #ascending order
 print("\n")
 print(team)
 
-team.special(2) #descending order
+team.special(BattleMode.OPTIMISE) #descending order
 print("\n")
 print(team)
-'''
+'''	
+
+
+#SET Mode testing
+team = PokeTeam()
+team.choose_randomly()
+print(team)
+print("\n")
+team.assemble_team(BattleMode.SET)
+print(team)
+print("\n")
+team.special(BattleMode.SET)
+print(team)
+print("\n")
+team.special(BattleMode.SET)
+print(team)
+
