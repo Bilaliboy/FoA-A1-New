@@ -192,7 +192,7 @@ class Battle:
             elif self.trainer2.team.is_empty():
                 return self.trainer1
             else:
-                return None e
+                return None
 
     
     #In the optimised mode. User picks a stat to order their team.The initial order will be maintained even if a certain stat decreases.
