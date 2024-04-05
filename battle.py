@@ -120,15 +120,79 @@ class Battle:
         #First we compare the speed of the pokemons and complete the battle phase for the faster pokemon against slower pokemon.
         #If both pokemons 
 
-        raise NotImplementedError
+        pokemon1 = self.trainer_1.team.push() #Pokemon fighting in trainer_1's team
+        pokemon2 = self.trainer_2.team.push() #Pokemon fighting in trainer 2's team
+        dead_pokemon_1 = ArrayStack(5)  #Empty stack for dead pokemon
+        dead_pokemon_2 = ArrayStack(5)  #Empty Stack for dead pokemon
+
+        while not self.trainer_1.team.is_empty() and not self.trainer_2.team.is_empty():
+
+            #Battle Logic
+            #If P1 speed is greater than P2
+            if pokemon1.get_speed() > pokemon2.get_speed():
+                damage = pokemon1.attack(pokemon2)
+                pokemon2.defend(damage)
+                if pokemon2.is_alive():
+                    counter_damage_to_p1 = pokemon2.attack(pokemon1)      #If still alive P2 attack P1.
+                    pokemon1.defend(counter_damage_to_p1)
+                #If P2 speed is greater than P1
+            elif pokemon1.get_speed() < pokemon2.get_speed():
+                damage = pokemon2.attack()
+                pokemon1.defend(damage)
+                if pokemon1.is_alive():     #If still alive P1 attacks P2
+                    counter_damage_to_p2 = pokemon1.attack(pokemon2)
+                    pokemon2.defend(counter_damage_to_p2)
+                    
+            else:
+                # Perform simultaneous attacks, if speed is same.
+                damage_to_p2 = pokemon1.attack(pokemon2)
+                damage_to_p1 = pokemon2.attack(pokemon1)
+                pokemon1.defend(damage_to_p2)
+                pokemon2.defend(damage_to_p1)
+            
+            #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and remains battling.
+            if pokemon1.is_alive() and not pokemon2.is_alive():
+                pokemon1.level_up()
+                dead_pokemon_2.push(pokemon2)     #pokemon 2 added to dead stack
+                pokemon2 =  self.trainer_2.team.push()    #re-initialize pokemon 2 as the next pokmon in team
+            #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and remains battling.
+            elif pokemon2.is_alive() and not pokemon1.is_alive():
+                pokemon2.level_up()
+                dead_pokemon_1.push(pokemon1)     #Pokemon 1 added to dead stack
+                pokemon1 =  self.trainer_1.team.push()    #re-initialize pokemon 1 as the next pokmon in team
+            #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
+            else:
+                pokemon1.defend(-1) #pokemon1.health -=1
+                pokemon2.defend(-1) #pokemon2.health -=1
+                #Covers the cases after they both take 1 damage.
+                if pokemon1.is_alive() and pokemon2.is_alive():     #Continue fighting
+                    continue  
+                elif pokemon1.is_alive() and not pokemon2.is_alive():
+                    pokemon1.level_up()
+                    dead_pokemon_2.push(pokemon2)     #pokemon 2 added to dead stack
+                    pokemon2 =  self.trainer_2.team.push()    #re-initialize pokemon 2 as the next pokmon in team
+                elif pokemon2.is_alive() and not pokemon1.is_alive():
+                    pokemon2.level_up()
+                    dead_pokemon_1.push(pokemon1)     #Pokemon 1 added to dead stack
+                    pokemon1 =  self.trainer_1.team.push()    #re-initialize pokemon 1 as the next pokmon in team
+                else:
+                    dead_pokemon_1.push(pokemon1)
+                    dead_pokemon_2.push(pokemon2)
+            # Determine the winner
+            if self.trainer_1.team.is_empty():
+                return self.trainer_2
+            elif self.trainer_2.team.is_empty():
+                return self.trainer_1
+            else:
+                return None
 
     #This function will use a circular Queue implementation as the each pokemon is sent back to the end of the battle queue after
     #each pokemon battle.
     def rotate_battle(self) -> PokeTeam | None:
         while not self.trainer1.team.is_empty() and not self.trainer2.team.is_empty():
         # serve the first Pokémon of each team for the battle
-            pokemon1 = self.trainer1.team.serve()
-            pokemon2 = self.trainer2.team.serve()
+            pokemon1 = self.trainer_1.team.serve()
+            pokemon2 = self.trainer_2.team.serve()
             dead_pokemon_1 = CircularQueue(5) #Empty queue to store dead pokemon from team 1 to add back later
             dead_pokemon_2 = CircularQueue(5) #Empty queue to store dead pokemon from team 2 to add back later
             
@@ -187,12 +251,13 @@ class Battle:
                     dead_pokemon_2.append(pokemon2)
 
             # Determine the winner
-            if self.trainer1.team.is_empty():
-                return self.trainer2
-            elif self.trainer2.team.is_empty():
-                return self.trainer1
+            if self.trainer_1.team.is_empty():
+                return self.trainer_2
+            elif self.trainer_2.team.is_empty():
+                return self.trainer_1
             else:
                 return None
+            
 
     
     #In the optimised mode. User picks a stat to order their team.The initial order will be maintained even if a certain stat decreases.
