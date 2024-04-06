@@ -104,7 +104,7 @@ class CircularQueue(Queue[T]):
         for _ in range(len(self)):
             print(self.array[index])
             index = (index + 1) % len(self.array)
-'''	   
+	   
     def __str__(self) -> str:
         ret_str = "["
         if self.front <= self.rear:
@@ -119,7 +119,7 @@ class CircularQueue(Queue[T]):
         ret_str = ret_str[:-2]  # Remove the trailing comma and space
         ret_str += "]"
         return ret_str
-'''	
+	
 
 
 class TestQueue(unittest.TestCase):
