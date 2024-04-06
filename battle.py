@@ -12,7 +12,17 @@ class Battle:
         self.criterion = criterion
     
     def commence_battle(self) -> Trainer | None:
-        raise NotImplementedError
+        '''
+        Each battle mode already retuns a winner or none if its draw.
+        This function will be called to start the battle and will return the outcome of the battle.
+        '''
+        if self.battle_mode == BattleMode.SET:
+            self.set_battle()
+        elif self.battle_mode == BattleMode.ROTATE:
+            self.rotate_battle()
+        elif self.battle_mode == BattleMode.OPTIMISE:
+            self.optimise_battle()
+        
 
     def _create_teams(self) -> None:
         #Trainer 1 picks team randomly or manually
@@ -264,10 +274,10 @@ class Battle:
     #therefore i believe using a sorted list is the best method in order to do this task as you can sort the team based on the attribute.
     def optimise_battle(self) -> PokeTeam | None:
         while not self.trainer_1.team.is_empty() and not self.trainer_2.team.is_empty():
-            pokemon1 = self.trainer_1.team.()
-            pokemon2 = self.trainer_2.team.serve()
-            self.dead_pokemon_1 = CircularQueue(5) #Empty queue to store dead pokemon from team 1 to add back later
-            self.dead_pokemon_2 = CircularQueue(5) #Empty queue to store dead pokemon from team 2 to add back later
+            pokemon1 = self.trainer_1.team.remove()
+            pokemon2 = self.trainer_2.team.remove()
+            self.dead_pokemon_1 = ArraySortedList(5) #Empty list to store dead pokemon from team 1 to add back later
+            self.dead_pokemon_2 = ArraySortedList(5) #Empty list to store dead pokemon from team 2 to add back later
             
             #Battle Logic
             #If P1 speed is greater than P2
@@ -277,8 +287,60 @@ class Battle:
                 if pokemon2.is_alive():
                     counter_damage_to_p1 = pokemon2.attack(pokemon1)      #If still alive P2 attack P1.
                     pokemon1.defend(counter_damage_to_p1)
+                #If P2 speed is greater than P1
+            elif pokemon1.get_speed() < pokemon2.get_speed():
+                damage = pokemon2.attack()
+                pokemon1.defend(damage)
+                if pokemon1.is_alive():     #If still alive P1 attacks P2
+                    counter_damage_to_p2 = pokemon1.attack(pokemon2)
+                    pokemon2.defend(counter_damage_to_p2)
+                    
+            else:
+                # Perform simultaneous attacks, if speed is same.
+                damage_to_p2 = pokemon1.attack(pokemon2)
+                damage_to_p1 = pokemon2.attack(pokemon1)
+                pokemon1.defend(damage_to_p2)
+                pokemon2.defend(damage_to_p1)
 
+            #Check for Fainting
+            
+            #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and returns to back of queue.
+            if pokemon1.is_alive() and not pokemon2.is_alive():
+                pokemon1.level_up()
+                self.trainer_1.team._index_to_add(pokemon1)
+                self.dead_pokemon_2._index_to_add(pokemon2)     #pokemon 2 added to dead queue
+            #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and returns to back of queue.
+            elif pokemon2.is_alive() and not pokemon1.is_alive():
+                pokemon2.level_up()
+                self.trainer_2.team._index_to_add(pokemon2)
+                self.dead_pokemon_1._index_to_add(pokemon1)     #Pokemon 1 added to dead queue
+            #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
+            else:
+                pokemon1.defend(-1) #pokemon1.health -=1
+                pokemon2.defend(-1) #pokemon2.health -=1
 
+                #Covers the cases after they both take 1 damage.
+                if pokemon1.is_alive() and pokemon2.is_alive():
+                    self.trainer_1_.team._index_to_add(pokemon1)
+                    self.trainer_2.team._index_to_add(pokemon2)
+                elif pokemon1.is_alive() and not pokemon2.is_alive():
+                    self.trainer_1_.team._index_to_add(pokemon1)
+                    self.dead_pokemon_2._index_to_add(pokemon2)
+                elif pokemon2.is_alive() and not pokemon1.is_alive():
+                    self.trainer_2.team._index_to_add(pokemon2)
+                    self.dead_pokemon_1._index_to_add(pokemon1)
+                else:
+                    self.dead_pokemon_1._index_to_add(pokemon1)
+                    self.dead_pokemon_2._index_to_add(pokemon2)
+
+            # Determine the winner
+            if self.trainer_1.team.is_empty():
+                return self.trainer_2
+            elif self.trainer_2.team.is_empty():
+                return self.trainer_1
+            else:
+                return None
+        
 
 if __name__ == '__main__':
     t1 = Trainer('Ash')

@@ -23,6 +23,11 @@ class ArraySortedList(SortedList[T]):
         size = max(self.MIN_CAPACITY, max_capacity)
         self.array = ArrayR(size)
         self.descending = descending
+    
+    def remove(self, item: T) -> None:
+        """ Remove an item from the list. """
+        index = self.index(item)
+        self.delete_at_index(index)
 
     def reset(self):
         """ Reset the list. """
