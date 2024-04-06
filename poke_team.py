@@ -229,7 +229,7 @@ class PokeTeam:
         """ Returns the length of the array
         :complexity: O(1)
         """
-        return len(self.team)
+        return min(self.TEAM_LIMIT,len(self.team))
 
     '''
     def __str__(self):
@@ -254,10 +254,10 @@ class PokeTeam:
                 ret_str += "(" + str(self.team.array[i]) + "), \n"
         else:
             # Handle other cases here
-            for pokemon in self.team:
-                ret_str += "(" + str(pokemon) + "),\n"
-            ret_str = ret_str[:-2]  # Remove the trailing comma and space
-            pass
+            # Handle other cases here
+            for j in range(len(self)):
+                ret_str += "(" + str(self.team[j]) + "),\n"
+            ret_str = ret_str[:-2] # Remove the trailing comma and space
 
         if ret_str.endswith(", "):
             ret_str = ret_str[:-2]  # Remove the trailing comma and space
@@ -302,7 +302,7 @@ class Trainer:
         precent_completion = int(self.get_pokedex_completion() * 100)
         return f"Trainer {self.name} Pokedex Completion: {precent_completion}%"
 
-	
+'''	
 
 if __name__ == '__main__':
     t = Trainer('Ash')
@@ -311,7 +311,7 @@ if __name__ == '__main__':
     print(t)
     print(t.get_team())
 
-	
+'''
 
 
 '''
@@ -392,3 +392,8 @@ print("\n")
 team.special(BattleMode.SET)
 print(team)
 '''
+
+poketeam = PokeTeam()
+PokeTeam.TEAM_LIMIT = 2
+poketeam.choose_randomly()
+print(poketeam)

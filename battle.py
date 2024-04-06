@@ -222,7 +222,7 @@ class Battle:
                 if pokemon2.is_alive():
                     counter_damage_to_p1 = pokemon2.attack(pokemon1)      #If still alive P2 attack P1.
                     print(f" pokemon 2 counter damge = {damage}")
-                    pokemon2.defend(counter_damage_to_p1)
+                    pokemon1.defend(counter_damage_to_p1)
                     print(f"pokemon1 health  = {pokemon2.get_health()}")
                 #If P2 speed is greater than P1
             elif pokemon1.get_speed() < pokemon2.get_speed():
@@ -232,7 +232,7 @@ class Battle:
                 print(f"pokemon1 health  = {pokemon1.get_health()}")
                 if pokemon1.is_alive():     #If still alive P1 attacks P2
                     counter_damage_to_p2 = pokemon1.attack(pokemon2)
-                    print(f" pokemon 1 counter damge = {damage}")
+                    print(f" pokemon 1 counter damge = {counter_damage_to_p2}")
                     pokemon2.defend(counter_damage_to_p2)
                     print(f"pokemon2 health  = {pokemon2.get_health()}")
                     
@@ -242,9 +242,9 @@ class Battle:
                 print(f"pokemon1 damage = {damage_to_p2}")
                 damage_to_p1 = pokemon2.attack(pokemon1)
                 print(f"pokemon2 damage = {damage_to_p1}")
-                pokemon1.defend(damage_to_p2)
+                pokemon1.defend(damage_to_p1)
                 print(f"pokemon1 health = {pokemon1.get_health()}")
-                pokemon2.defend(damage_to_p1)
+                pokemon2.defend(damage_to_p2)
                 print(f"pokemon2 health = {pokemon2.get_health()}")
         
             
@@ -256,30 +256,51 @@ class Battle:
                 pokemon1.level_up()
                 print(f"pokemon 1 after level up = {pokemon1.get_level()}")
                 self.trainer_1.team.team.append(pokemon1)
+                print(f"team 1 after pokemon 2 is dead = {self.trainer_1.get_team()}")
                 self.dead_pokemon_2.append(pokemon2)     #pokemon 2 added to dead queue
+                print(f"dead pokemon 2 added to dead queue: {self.dead_pokemon_2}")
             #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and returns to back of queue.
             elif pokemon2.is_alive() and not pokemon1.is_alive():
+                print(f"pokemon 2 level = {pokemon2.get_level()}")
                 pokemon2.level_up()
+                print(f"pokemon 2 after level up = {pokemon2.get_level()}")
                 self.trainer_2.team.team.append(pokemon2)
+                print(f"team 2 after pokemon 1 is dead = {self.trainer_2.get_team()}")
                 self.dead_pokemon_1.append(pokemon1)     #Pokemon 1 added to dead queue
+                print(f"dead pokemon 1 added to dead queue: {self.dead_pokemon_1}")
             #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
-                pokemon1.defend(-1) #pokemon1.health -=1
-                pokemon2.defend(-1) #pokemon2.health -=1
+                print("both pokemon1 and pokemon2 take -1 damage as both is alive")
+                pokemon1.health -=1
+                print(f"after pokemon1 takes 1 damage: {pokemon1.get_health()}")
+                pokemon2.health -=1
+                print(f"after pokemon2 takes 1 damage: {pokemon2.get_health()}")
 
                 #Covers the cases after they both take 1 damage.
                 if pokemon1.is_alive() and pokemon2.is_alive():
+                    print("if both pokemon still alive after 1 damage")
                     self.trainer_1.team.team.append(pokemon1)
+                    print(f"pokemon1 added to end of team: {self.trainer_1.get_team()}")
                     self.trainer_2.team.team.append(pokemon2)
+                    print(f"pokemon2 added to end of team: {self.trainer_2.get_team()}")
                 elif pokemon1.is_alive() and not pokemon2.is_alive():
+                    print("if pokemon1 is alive and pokemon2 is dead")
                     self.trainer_1.team.team.append(pokemon1)
+                    print(f"pokemon1 is added back to team: {self.trainer_1.get_team()}")
                     self.dead_pokemon_2.append(pokemon2)
+                    print(f"pokemon2 is added to dead queue: {self.dead_pokemon_2}")
                 elif pokemon2.is_alive() and not pokemon1.is_alive():
+                    print("if pokemon2 is alive and pokemon1 is dead")
                     self.trainer_2.team.team.append(pokemon2)
+                    print(f"pokemon2 is added back to team: {self.trainer_2.get_team()}")
                     self.dead_pokemon_1.append(pokemon1)
+                    print(f"pokemon1 is added to dead queue: {self.dead_pokemon_1}")
                 else:
+                    print("if both pokemon are dead")
                     self.dead_pokemon_1.append(pokemon1)
+                    print(f"pokemon1 is added to dead queue: {self.dead_pokemon_1}")
                     self.dead_pokemon_2.append(pokemon2)
+                    print(f"pokemon2 is added to dead queue: {self.dead_pokemon_2}")
 
             # Determine the winner
             if self.trainer_1.team.team.is_empty():

@@ -106,19 +106,15 @@ class CircularQueue(Queue[T]):
             index = (index + 1) % len(self.array)
 	   
     def __str__(self) -> str:
-        ret_str = "["
-        if self.front <= self.rear:
-            for i in range(self.front, self.rear):
-                ret_str += str(self.array[i]) + ", "
-        else:
-            for i in range(self.front, len(self.array)):
-                ret_str += str(self.array[i]) + ", "
-            for i in range(0, self.rear):
-                ret_str += str(self.array[i]) + ", "
+        elements = []
 
-        ret_str = ret_str[:-2]  # Remove the trailing comma and space
-        ret_str += "]"
-        return ret_str
+        if self.front <= self.rear:
+            elements = self.array[self.front:self.rear]
+        else:
+            elements = self.array[self.front:] + self.array[:self.rear]
+
+        return "[" + ", ".join(map(str, elements)) + "]"
+
 	
 
 
