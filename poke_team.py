@@ -72,7 +72,7 @@ class ArraySet(Set[T]):
 
 
 class PokeTeam:
-    TEAM_LIMIT = 1
+    TEAM_LIMIT = 6
     POKE_LIST = get_all_pokemon_types()
     CRITERION_LIST = ["health", "defence", "battle_power", "speed", "level"]
 
@@ -302,7 +302,7 @@ class Trainer:
         precent_completion = int(self.get_pokedex_completion() * 100)
         return f"Trainer {self.name} Pokedex Completion: {precent_completion}%"
 
-'''	
+	
 
 if __name__ == '__main__':
     t = Trainer('Ash')
@@ -311,7 +311,7 @@ if __name__ == '__main__':
     print(t)
     print(t.get_team())
 
-'''
+
 
 
 '''

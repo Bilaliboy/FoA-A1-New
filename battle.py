@@ -23,7 +23,40 @@ class Battle:
         elif self.battle_mode == BattleMode.OPTIMISE:
             self.optimise_battle()
         
-        
+    def perform_battle(self, pokemon1: Pokemon, pokemon2: Pokemon) -> None:
+    # If P1 speed is greater than P2
+        if pokemon1.get_speed() > pokemon2.get_speed():
+            damage = pokemon1.attack(pokemon2)
+            print(f"pokemon 1 damage = {damage}")
+            pokemon2.defend(damage)
+            print(f"pokemon 2 health = {pokemon2.get_health()}")
+            if pokemon2.is_alive():
+                counter_damage_to_p1 = pokemon2.attack(pokemon1)  # If still alive, P2 attacks P1
+                print(f"pokemon 2 counter damage = {counter_damage_to_p1}")
+                pokemon1.defend(counter_damage_to_p1)
+                print(f"pokemon 1 health = {pokemon1.get_health()}")
+        # If P2 speed is greater than P1
+        elif pokemon1.get_speed() < pokemon2.get_speed():
+            damage = pokemon2.attack(pokemon1)
+            print(f"pokemon 2 damage = {damage}")
+            pokemon1.defend(damage)
+            print(f"pokemon 1 health = {pokemon1.get_health()}")
+            if pokemon1.is_alive():
+                counter_damage_to_p2 = pokemon1.attack(pokemon2)  # If still alive, P1 attacks P2
+                print(f"pokemon 1 counter damage = {counter_damage_to_p2}")
+                pokemon2.defend(counter_damage_to_p2)
+                print(f"pokemon 2 health = {pokemon2.get_health()}")
+        else:
+            # Perform simultaneous attacks if speed is the same
+            damage_to_p2 = pokemon1.attack(pokemon2)
+            print(f"pokemon 1 damage = {damage_to_p2}")
+            damage_to_p1 = pokemon2.attack(pokemon1)
+            print(f"pokemon 2 damage = {damage_to_p1}")
+            pokemon1.defend(damage_to_p1)
+            print(f"pokemon 1 health = {pokemon1.get_health()}")
+            pokemon2.defend(damage_to_p2)
+            print(f"pokemon 2 health = {pokemon2.get_health()}")
+    
 
     def _create_teams(self) -> None:
         #Trainer 1 picks team randomly or manually
@@ -199,7 +232,7 @@ class Battle:
 
     #This function will use a circular Queue implementation as the each pokemon is sent back to the end of the battle queue after
     #each pokemon battle.
-    def rotate_battle(self) -> PokeTeam | None:
+    def rotate_battle(self) -> Trainer | None:
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
         # serve the first Pokémon of each team for the battle
             pokemon1 = self.trainer_1.team.team.serve()
@@ -213,42 +246,9 @@ class Battle:
             print(f"First team: {self.trainer_1.get_team()}")
             print(f"Second team: {self.trainer_2.get_team()}")
             
-            #Battle Logic
-            #If P1 speed is greater than P2
-            if pokemon1.get_speed() > pokemon2.get_speed():
-                damage = pokemon1.attack(pokemon2)
-                print(f" pokemon 1 damge = {damage}")
-                pokemon2.defend(damage)
-                print(f"pokemon2 health  = {pokemon2.get_health()}")
-                if pokemon2.is_alive():
-                    counter_damage_to_p1 = pokemon2.attack(pokemon1)      #If still alive P2 attack P1.
-                    print(f" pokemon 2 counter damge = {counter_damage_to_p1}")
-                    pokemon1.defend(counter_damage_to_p1)
-                    print(f"pokemon1 health  = {pokemon2.get_health()}")
-                #If P2 speed is greater than P1
-            elif pokemon1.get_speed() < pokemon2.get_speed():
-                damage = pokemon2.attack(pokemon1)
-                print(f" pokemon 2 damge = {damage}")
-                pokemon1.defend(damage)
-                print(f"pokemon1 health  = {pokemon1.get_health()}")
-                if pokemon1.is_alive():     #If still alive P1 attacks P2
-                    counter_damage_to_p2 = pokemon1.attack(pokemon2)
-                    print(f" pokemon 1 counter damge = {counter_damage_to_p2}")
-                    pokemon2.defend(counter_damage_to_p2)
-                    print(f"pokemon2 health  = {pokemon2.get_health()}")
-                    
-            else:
-                # Perform simultaneous attacks, if speed is same.
-                damage_to_p2 = pokemon1.attack(pokemon2)
-                print(f"pokemon1 damage = {damage_to_p2}")
-                damage_to_p1 = pokemon2.attack(pokemon1)
-                print(f"pokemon2 damage = {damage_to_p1}")
-                pokemon1.defend(damage_to_p1)
-                print(f"pokemon1 health = {pokemon1.get_health()}")
-                pokemon2.defend(damage_to_p2)
-                print(f"pokemon2 health = {pokemon2.get_health()}")
-        
-            
+            # Battle Logic
+            self.perform_battle(pokemon1, pokemon2)
+
             # Check for fainting
             
             #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and returns to back of queue.
@@ -270,7 +270,7 @@ class Battle:
                 print(f"team 2 after pokemon 1 is dead = {self.trainer_2.get_team()}")
                 self.dead_pokemon_1.append(pokemon1)     #Pokemon 1 added to dead queue
                 print(f"dead pokemon 1 added to dead queue: {self.dead_pokemon_1}")
-                print(f"team 1 after pokemon 1y is dead = {self.trainer_2.get_team()}")
+                print(f"team 1 after pokemon 1 is dead = {self.trainer_1.get_team()}")
             #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
                 print("both pokemon1 and pokemon2 take -1 damage as both is alive")
@@ -309,10 +309,16 @@ class Battle:
             print(f"if team 2 is empty return False: {self.trainer_2.team.team.is_empty()}")
 
             # Determine the winner
-            if self.trainer_1.team.team.is_empty():
-                return self.trainer_2
-            elif self.trainer_2.team.team.is_empty():
-                return self.trainer_1
+        print("out of loop")
+        if self.trainer_1.team.team.is_empty():
+            print("winner is team 2")
+            return (self.trainer_2)
+        elif self.trainer_2.team.team.is_empty():
+            print("winner is team 1")
+            return (self.trainer_1)
+        else:
+            print("both teams dead")
+            return None
             
             
     #In the optimised mode. User picks a stat to order their team.The initial order will be maintained even if a certain stat decreases.
@@ -354,12 +360,12 @@ class Battle:
             #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and returns to back of queue.
             if pokemon1.is_alive() and not pokemon2.is_alive():
                 pokemon1.level_up()
-                self.trainer_1.team._index_to_add(pokemon1)
+                self.trainer_1.team.team._index_to_add(pokemon1)
                 self.dead_pokemon_2._index_to_add(pokemon2)     #pokemon 2 added to dead queue
             #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and returns to back of queue.
             elif pokemon2.is_alive() and not pokemon1.is_alive():
                 pokemon2.level_up()
-                self.trainer_2.team._index_to_add(pokemon2)
+                self.trainer_2.team.team._index_to_add(pokemon2)
                 self.dead_pokemon_1._index_to_add(pokemon1)     #Pokemon 1 added to dead queue
             #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
