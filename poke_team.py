@@ -72,7 +72,7 @@ class ArraySet(Set[T]):
 
 
 class PokeTeam:
-    TEAM_LIMIT = 6
+    TEAM_LIMIT = 1
     POKE_LIST = get_all_pokemon_types()
     CRITERION_LIST = ["health", "defence", "battle_power", "speed", "level"]
 
@@ -393,7 +393,4 @@ team.special(BattleMode.SET)
 print(team)
 '''
 
-poketeam = PokeTeam()
-PokeTeam.TEAM_LIMIT = 2
-poketeam.choose_randomly()
-print(poketeam)
+

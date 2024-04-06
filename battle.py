@@ -23,6 +23,7 @@ class Battle:
         elif self.battle_mode == BattleMode.OPTIMISE:
             self.optimise_battle()
         
+        
 
     def _create_teams(self) -> None:
         #Trainer 1 picks team randomly or manually
@@ -221,7 +222,7 @@ class Battle:
                 print(f"pokemon2 health  = {pokemon2.get_health()}")
                 if pokemon2.is_alive():
                     counter_damage_to_p1 = pokemon2.attack(pokemon1)      #If still alive P2 attack P1.
-                    print(f" pokemon 2 counter damge = {damage}")
+                    print(f" pokemon 2 counter damge = {counter_damage_to_p1}")
                     pokemon1.defend(counter_damage_to_p1)
                     print(f"pokemon1 health  = {pokemon2.get_health()}")
                 #If P2 speed is greater than P1
@@ -259,6 +260,7 @@ class Battle:
                 print(f"team 1 after pokemon 2 is dead = {self.trainer_1.get_team()}")
                 self.dead_pokemon_2.append(pokemon2)     #pokemon 2 added to dead queue
                 print(f"dead pokemon 2 added to dead queue: {self.dead_pokemon_2}")
+                print(f"team 2 after pokemon 2 is dead = {self.trainer_2.get_team()}")
             #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and returns to back of queue.
             elif pokemon2.is_alive() and not pokemon1.is_alive():
                 print(f"pokemon 2 level = {pokemon2.get_level()}")
@@ -268,6 +270,7 @@ class Battle:
                 print(f"team 2 after pokemon 1 is dead = {self.trainer_2.get_team()}")
                 self.dead_pokemon_1.append(pokemon1)     #Pokemon 1 added to dead queue
                 print(f"dead pokemon 1 added to dead queue: {self.dead_pokemon_1}")
+                print(f"team 1 after pokemon 1y is dead = {self.trainer_2.get_team()}")
             #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
                 print("both pokemon1 and pokemon2 take -1 damage as both is alive")
@@ -301,12 +304,16 @@ class Battle:
                     print(f"pokemon1 is added to dead queue: {self.dead_pokemon_1}")
                     self.dead_pokemon_2.append(pokemon2)
                     print(f"pokemon2 is added to dead queue: {self.dead_pokemon_2}")
+            
+            print(f"if team 1 is empty return False: {self.trainer_1.team.team.is_empty()}")
+            print(f"if team 2 is empty return False: {self.trainer_2.team.team.is_empty()}")
 
             # Determine the winner
             if self.trainer_1.team.team.is_empty():
                 return self.trainer_2
             elif self.trainer_2.team.team.is_empty():
                 return self.trainer_1
+            
             
     #In the optimised mode. User picks a stat to order their team.The initial order will be maintained even if a certain stat decreases.
     #The stats are stored in the criterion list in task 2.

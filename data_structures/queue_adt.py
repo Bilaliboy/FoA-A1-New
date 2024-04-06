@@ -62,6 +62,7 @@ class CircularQueue(Queue[T]):
         self.front = 0
         self.rear = 0
         self.array = ArrayR(max(self.MIN_CAPACITY,max_capacity))
+        
 
 
     def append(self, item: T) -> None:
