@@ -186,19 +186,19 @@ class Battle:
         #First we compare the speed of the pokemons and complete the battle phase for the faster pokemon against slower pokemon.
         #If both pokemons 
 
+        print(self.trainer_1.get_team())
+        print(self.trainer_2.get_team())
         pokemon1 = self.trainer_1.team.team.pop() #Pokemon fighting in trainer_1's team
-        print(pokemon1)
         pokemon2 = self.trainer_2.team.team.pop() #Pokemon fighting in trainer 2's team
-        print(pokemon2)
         self.dead_pokemon_1 = ArrayStack(6)  #Empty stack for dead pokemon
         self.dead_pokemon_2 = ArrayStack(6)  #Empty Stack for dead pokemon
 
         while True:
             self.trainer_1.register_pokemon(pokemon2)
             self.trainer_2.register_pokemon(pokemon1)
+
             #Battle logic
             self.perform_battle(pokemon1,pokemon2)
-            print("hi")
             
             #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and remains battling.
             if pokemon1.is_alive() and not pokemon2.is_alive():
@@ -218,8 +218,8 @@ class Battle:
 
             #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
-                pokemon1.defend(-1) #pokemon1.health -=1
-                pokemon2.defend(-1) #pokemon2.health -=1
+                pokemon1.defend(1) #pokemon1.health -=1
+                pokemon2.defend(1) #pokemon2.health -=1
 
                 #Covers the cases after they both take 1 damage.
                 if pokemon1.is_alive() and pokemon2.is_alive():     #Continue fighting
@@ -229,12 +229,11 @@ class Battle:
                     pokemon1.level_up()
                     self.dead_pokemon_2.push(pokemon2)     #pokemon 2 added to dead stack
                     if not self.trainer_2.team.team.is_empty():
-                        pokemon2 =  self.trainer_2.team.team.push()    #re-initialize pokemon 2 as the next pokmon in team if team is not empty
+                        pokemon2 =  self.trainer_2.team.team.pop()    #re-initialize pokemon 2 as the next pokmon in team if team is not empty
 
                 elif pokemon2.is_alive() and not pokemon1.is_alive():
                     pokemon2.level_up()
                     self.dead_pokemon_1.push(pokemon1)     #Pokemon 1 added to dead stack
-                    pokemon1 =  self.trainer_1.team.team.push()    #re-initialize pokemon 1 as the next pokmon in team
                     if not self.trainer_1.team.team.is_empty():
                         pokemon1 = self.trainer_1.team.team.pop()    #re-initialize pokemon 1 as the next pokmon in team
 
@@ -274,9 +273,9 @@ class Battle:
     def rotate_battle(self) -> PokeTeam | None:
 
         print("team 1 before battle")
-        print(self.trainer_1.get_team().team.print_items())
+        self.trainer_1.get_team().team.print_items()
         print("team 2 before battle")
-        print(self.trainer_2.get_team().team.print_items())
+        self.trainer_2.get_team().team.print_items()
 
         self.dead_pokemon_1 = CircularQueue(6) #Empty queue to store dead pokemon from team 1 to add back later
         self.dead_pokemon_2 = CircularQueue(6) #Empty queue to store dead pokemon from team 2 to add back later
@@ -323,9 +322,9 @@ class Battle:
                     self.dead_pokemon_2.append(pokemon2)
         
         print("team 1 after battle")
-        print(self.trainer_1.get_team().team.print_items())
+        self.trainer_1.get_team().team.print_items()
         print("team 2 after battle")
-        print(self.trainer_2.get_team().team.print_items())
+        self.trainer_2.get_team().team.print_items()
 
         # Determine the winner after the battle loop
         if self.trainer_1.team.team.is_empty():
@@ -340,12 +339,15 @@ class Battle:
     #The assign method in Task 2 assigns the order of the team based on the chosen attribute from the criterion list.
     #therefore i believe using a sorted list is the best method in order to do this task as you can sort the team based on the attribute.
     def optimise_battle(self) -> PokeTeam | None:
+
         print("team 1 before battle")
-        print(self.trainer_1.get_team().team.print_items())
+        self.trainer_1.get_team().team.print_items()
         print("team 2 before battle")
-        print(self.trainer_2.get_team().team.print_items())
+        self.trainer_2.get_team().team.print_items()
+
         self.dead_pokemon_1 = ArraySortedList(6) #Empty list to store dead pokemon from team 1 to add back later
         self.dead_pokemon_2 = ArraySortedList(6) #Empty list to store dead pokemon from team 2 to add back later
+
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             pokemon1 = self.trainer_1.team.team.delete_at_index(0)   #removes the first element of the team
             pokemon2 = self.trainer_2.team.team.delete_at_index(0)   #removes the first element of the team
@@ -399,9 +401,9 @@ class Battle:
                     self.dead_pokemon_1.add(pokemon1_ListItem)  # adds the pokemon back into dead list
                     self.dead_pokemon_2.add(pokemon2_ListItem)   # adds the pokemon back into dead list
         print("team 1 after battle")
-        print(self.trainer_1.get_team().team.print_items())
+        self.trainer_1.get_team().team.print_items()
         print("team 2 after battle")
-        print(self.trainer_2.get_team().team.print_items())
+        self.trainer_2.get_team().team.print_items()
             
 
 
@@ -417,7 +419,7 @@ class Battle:
 if __name__ == '__main__':
     t1 = Trainer('Ash')
     t2 = Trainer('Gary')
-    b = Battle(t1, t2, BattleMode.OPTIMISE)
+    b = Battle(t1, t2, BattleMode.ROTATE)
     b._create_teams()
     winner = b.commence_battle()
 
