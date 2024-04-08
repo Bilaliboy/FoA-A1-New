@@ -82,6 +82,30 @@ class Battle:
     
 
     def _create_teams(self) -> None:
+        if self.battle_mode == BattleMode.SET:
+            self.trainer_1.pick_team("Random")
+            self.trainer_2.pick_team("Random")
+            self.trainer_1.team.assemble_team(BattleMode.SET)
+            self.trainer_2.team.assemble_team(BattleMode.SET)
+
+        elif self.battle_mode == BattleMode.ROTATE:
+            self.trainer_1.pick_team("Random")
+            self.trainer_2.pick_team("Random")
+            self.trainer_1.team.assemble_team(BattleMode.ROTATE)
+            self.trainer_2.team.assemble_team(BattleMode.ROTATE)
+
+        elif self.battle_mode == BattleMode.OPTIMISE:
+            self.trainer_1.pick_team("Random")
+            self.trainer_2.pick_team("Random")
+            self.trainer_1.team.assemble_team(BattleMode.OPTIMISE)
+            self.trainer_2.team.assemble_team(BattleMode.OPTIMISE)
+            self.trainer_1.team.assemble_team(self.criterion)
+            self.trainer_2.team.assemble_team(self.criterion)
+            
+
+        '''
+        if You want to change the criteria with user inputs did not know we were not supposed to do this.
+
         #Trainer 1 picks team randomly or manually
         while True:
             #Validate to make sure they pick a team.
@@ -175,6 +199,7 @@ class Battle:
                     print("Please enter a string")
                 self.trainer_2.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
                 self.trainer_2.team.assign_team(criteria)   #Assign team based on criteria selected
+        '''
 
     # Note: These are here for your convenience
     # If you prefer you can ignore them
