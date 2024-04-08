@@ -340,17 +340,36 @@ class Battle:
     #therefore i believe using a sorted list is the best method in order to do this task as you can sort the team based on the attribute.
     def optimise_battle(self) -> PokeTeam | None:
 
-        print("team 1 before battle")
-        self.trainer_1.get_team().team.print_items()
-        print("team 2 before battle")
-        self.trainer_2.get_team().team.print_items()
+        #print("team 1 before battle")
+        #self.trainer_1.get_team().team.print_items()
+        #print("\n")
+        #print("team 2 before battle")
+        #self.trainer_2.get_team().team.print_items()
 
         self.dead_pokemon_1 = ArraySortedList(6) #Empty list to store dead pokemon from team 1 to add back later
         self.dead_pokemon_2 = ArraySortedList(6) #Empty list to store dead pokemon from team 2 to add back later
 
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
+            #before we delete at index
+            self.trainer_1.get_team().team.print_items()
+            print("\n")
+            print("team 2 before battle")
+            self.trainer_2.get_team().team.print_items()
+
             pokemon1 = self.trainer_1.team.team.delete_at_index(0)   #removes the first element of the team
+            print("\n")
+            print(pokemon1)
             pokemon2 = self.trainer_2.team.team.delete_at_index(0)   #removes the first element of the team
+            print("\n")
+            print(pokemon2)
+            print("\n")
+
+            #after we delete at index. problem occurs here.
+            print("team 1 before battle")
+            self.trainer_1.get_team().team.print_items()
+            print("\n")
+            print("team 2 before battle")
+            self.trainer_2.get_team().team.print_items()
 
             pokemon1_ListItem = pokemon1
             pokemon2_ListItem = pokemon2
@@ -419,7 +438,7 @@ class Battle:
 if __name__ == '__main__':
     t1 = Trainer('Ash')
     t2 = Trainer('Gary')
-    b = Battle(t1, t2, BattleMode.ROTATE)
+    b = Battle(t1, t2, BattleMode.OPTIMISE)
     b._create_teams()
     winner = b.commence_battle()
 
