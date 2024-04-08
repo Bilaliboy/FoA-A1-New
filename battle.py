@@ -118,7 +118,7 @@ class Battle:
             elif self.battle_mode == BattleMode.OPTIMISE:
                 try:
                     #asks user to select a criteria.
-                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                    criteria = str(input("Team 1, please type in a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
                 except ValueError:
                     print("Please enter a string")     
                 self.trainer_1.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
@@ -135,7 +135,7 @@ class Battle:
             elif self.battle_mode == BattleMode.OPTIMISE:
                 try:
                     #asks user to select a criteria.
-                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                    criteria = str(input("Team 1, please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
                 except ValueError:
                     print("Please enter a string")
                 self.trainer_1.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
@@ -153,7 +153,7 @@ class Battle:
             elif self.battle_mode == BattleMode.OPTIMISE:
                 try:
                     #asks user to select a criteria.
-                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                    criteria = str(input("Team 2, please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
                 except ValueError:
                     print("Please enter a string")     
                 self.trainer_2.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
@@ -170,7 +170,7 @@ class Battle:
             elif self.battle_mode == BattleMode.OPTIMISE:
                 try:
                     #asks user to select a criteria.
-                    criteria = str(input("please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
+                    criteria = str(input("Team 2, please select a criteria to sort the team by\n health, defence, battle_power, speed, level:\n"))    #Input for criteria selection
                 except ValueError:
                     print("Please enter a string")
                 self.trainer_2.team.assemble_team(battle_mode=BattleMode.OPTIMISE)
@@ -190,18 +190,19 @@ class Battle:
         print(pokemon1)
         pokemon2 = self.trainer_2.team.team.pop() #Pokemon fighting in trainer 2's team
         print(pokemon2)
-        self.dead_pokemon_1 = ArrayStack(5)  #Empty stack for dead pokemon
-        self.dead_pokemon_2 = ArrayStack(5)  #Empty Stack for dead pokemon
+        self.dead_pokemon_1 = ArrayStack(6)  #Empty stack for dead pokemon
+        self.dead_pokemon_2 = ArrayStack(6)  #Empty Stack for dead pokemon
 
-        #example now team is empty.
-
-        while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
-            
+        while True:
+            self.trainer_1.register_pokemon(pokemon2)
+            self.trainer_2.register_pokemon(pokemon1)
             #Battle logic
             self.perform_battle(pokemon1,pokemon2)
+            print("hi")
             
             #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and remains battling.
             if pokemon1.is_alive() and not pokemon2.is_alive():
+                print("pokemon1 alive, pokemon2 dead")
                 pokemon1.level_up()
                 self.dead_pokemon_2.push(pokemon2)     #pokemon 2 added to dead stack
                 if not self.trainer_2.team.team.is_empty():
@@ -209,6 +210,7 @@ class Battle:
 
             #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and remains battling.
             elif pokemon2.is_alive() and not pokemon1.is_alive():
+                print("pokemon1 dead, pokemon2 alive")
                 pokemon2.level_up()
                 self.dead_pokemon_1.push(pokemon1)     #Pokemon 1 added to dead stack
                 if not self.trainer_1.team.team.is_empty():
@@ -246,16 +248,16 @@ class Battle:
                     elif not self.trainer_2.team.team.is_empty():
                         pokemon2 = self.trainer_2.team.team.pop()
                 
-                print(self.trainer_1.team.team)
-                print(self.trainer_2.team.team)
-            '''
+
+            print(self.trainer_1.get_team())
+            print(self.trainer_2.get_team())
             if self.trainer_1.team.team.is_empty():
                 print(f"team 1 is empty if true: {self.trainer_1.team.team.is_empty()}")
                 break
             elif self.trainer_2.team.team.is_empty():
                 print(f"team 2 is empty if true: {self.trainer_2.team.team.is_empty()}")
                 break
-            '''
+
         print("out of loop")
             # Determine the winner
         if self.trainer_1.team.team.is_empty():
@@ -271,8 +273,8 @@ class Battle:
     #each pokemon battle.
     def rotate_battle(self) -> PokeTeam | None:
         
-        self.dead_pokemon_1 = CircularQueue(5) #Empty queue to store dead pokemon from team 1 to add back later
-        self.dead_pokemon_2 = CircularQueue(5) #Empty queue to store dead pokemon from team 2 to add back later
+        self.dead_pokemon_1 = CircularQueue(6) #Empty queue to store dead pokemon from team 1 to add back later
+        self.dead_pokemon_2 = CircularQueue(6) #Empty queue to store dead pokemon from team 2 to add back later
         
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             # serve the first Pokémon of each team for the battle
@@ -328,11 +330,13 @@ class Battle:
     #The assign method in Task 2 assigns the order of the team based on the chosen attribute from the criterion list.
     #therefore i believe using a sorted list is the best method in order to do this task as you can sort the team based on the attribute.
     def optimise_battle(self) -> PokeTeam | None:
+        self.dead_pokemon_1 = ArraySortedList(6) #Empty list to store dead pokemon from team 1 to add back later
+        self.dead_pokemon_2 = ArraySortedList(6) #Empty list to store dead pokemon from team 2 to add back later
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             pokemon1 = self.trainer_1.team.team.delete_at_index(0)   #removes the first element of the team
             pokemon2 = self.trainer_2.team.team.delete_at_index(0)   #removes the first element of the team
-            self.dead_pokemon_1 = ArraySortedList(5) #Empty list to store dead pokemon from team 1 to add back later
-            self.dead_pokemon_2 = ArraySortedList(5) #Empty list to store dead pokemon from team 2 to add back later
+            self.trainer_1.register_pokemon(pokemon2)
+            self.trainer_2.register_pokemon(pokemon1)
 
             pokemon1_ListItem = pokemon1
             pokemon2_ListItem = pokemon2
@@ -392,7 +396,7 @@ class Battle:
 if __name__ == '__main__':
     t1 = Trainer('Ash')
     t2 = Trainer('Gary')
-    b = Battle(t1, t2, BattleMode.OPTIMISE)
+    b = Battle(t1, t2, BattleMode.SET)
     b._create_teams()
     winner = b.commence_battle()
 
