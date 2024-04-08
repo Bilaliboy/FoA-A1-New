@@ -319,8 +319,8 @@ class Battle:
                     self.dead_pokemon_1.append(pokemon1)
                     self.dead_pokemon_2.append(pokemon2)
             
-        print(self.trainer_1.get_team())
-        print(self.trainer_2.get_team())
+        print(self.trainer_1.get_team().team.print_items())
+        print(self.trainer_2.get_team().team.print_items())
 
         # Determine the winner after the battle loop
         if self.trainer_1.team.team.is_empty():
@@ -409,7 +409,7 @@ class Battle:
 if __name__ == '__main__':
     t1 = Trainer('Ash')
     t2 = Trainer('Gary')
-    b = Battle(t1, t2, BattleMode.OPTIMISE)
+    b = Battle(t1, t2, BattleMode.ROTATE)
     b._create_teams()
     winner = b.commence_battle()
 
