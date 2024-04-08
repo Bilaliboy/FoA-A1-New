@@ -62,6 +62,8 @@ class CircularQueue(Queue[T]):
         self.front = 0
         self.rear = 0
         self.array = ArrayR(max(self.MIN_CAPACITY,max_capacity))
+
+    #added was in lecture slides
     def __getitem__(self, index: int):
         return self.array[index]
 
@@ -102,12 +104,15 @@ class CircularQueue(Queue[T]):
         self.front = 0
         self.rear = 0
     
+    #added was in lecture slides.
     def print_items(self) -> None:
         index = self.front
         for _ in range(len(self)):
             print(self.array[index])
             index = (index + 1) % len(self.array)
-	   
+
+    
+	#added to see the strings   
     def __str__(self) -> str:
         elements = []
 

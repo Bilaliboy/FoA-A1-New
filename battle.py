@@ -306,8 +306,8 @@ class Battle:
                 self.dead_pokemon_1.append(pokemon1)
             # If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
-                pokemon1.defend(-1)
-                pokemon2.defend(-1)
+                pokemon1.defend(1)
+                pokemon2.defend(1)
                 # Add pokemons back to respective teams or dead queues accordingly
                 if pokemon1.is_alive() and pokemon2.is_alive():
                     self.trainer_1.team.team.append(pokemon1)
@@ -382,8 +382,8 @@ class Battle:
                 self.dead_pokemon_1.add(pokemon1_ListItem)     #Pokemon 1 added to dead queue
             #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
-                pokemon1.defend(-1) #pokemon1.health -=1
-                pokemon2.defend(-1) #pokemon2.health -=1
+                pokemon1.defend(1) #pokemon1.health -=1
+                pokemon2.defend(1) #pokemon2.health -=1
 
                 #Covers the cases after they both take 1 damage.
                 if pokemon1.is_alive() and pokemon2.is_alive():
