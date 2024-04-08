@@ -195,7 +195,7 @@ class Battle:
 
         #example now team is empty.
 
-        while True:
+        while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             
             #Battle logic
             self.perform_battle(pokemon1,pokemon2)
@@ -248,18 +248,21 @@ class Battle:
                 
                 print(self.trainer_1.team.team)
                 print(self.trainer_2.team.team)
-
+            '''
             if self.trainer_1.team.team.is_empty():
                 print(f"team 1 is empty if true: {self.trainer_1.team.team.is_empty()}")
                 break
             elif self.trainer_2.team.team.is_empty():
                 print(f"team 2 is empty if true: {self.trainer_2.team.team.is_empty()}")
                 break
+            '''
         print("out of loop")
             # Determine the winner
         if self.trainer_1.team.team.is_empty():
+            print("winner team 2")
             return self.trainer_2.team.team
         elif self.trainer_2.team.team.is_empty():
+            print("winner team 1")
             return self.trainer_1.team.team
         else:
             return None
@@ -267,12 +270,16 @@ class Battle:
     #This function will use a circular Queue implementation as the each pokemon is sent back to the end of the battle queue after
     #each pokemon battle.
     def rotate_battle(self) -> PokeTeam | None:
+        
+        self.dead_pokemon_1 = CircularQueue(5) #Empty queue to store dead pokemon from team 1 to add back later
+        self.dead_pokemon_2 = CircularQueue(5) #Empty queue to store dead pokemon from team 2 to add back later
+        
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             # serve the first Pokémon of each team for the battle
             pokemon1 = self.trainer_1.team.team.serve()
             pokemon2 = self.trainer_2.team.team.serve()
-            self.dead_pokemon_1 = CircularQueue(5) #Empty queue to store dead pokemon from team 1 to add back later
-            self.dead_pokemon_2 = CircularQueue(5) #Empty queue to store dead pokemon from team 2 to add back later
+
+            # Register the Pokémons
             self.trainer_1.register_pokemon(pokemon2)
             self.trainer_2.register_pokemon(pokemon1)
     
@@ -322,11 +329,15 @@ class Battle:
     #therefore i believe using a sorted list is the best method in order to do this task as you can sort the team based on the attribute.
     def optimise_battle(self) -> PokeTeam | None:
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
-            pokemon1 = self.trainer_1.team.team.remove(0)   #removes the first element of the team 
-            pokemon2 = self.trainer_2.team.team.remove(0)   #removes the first element of the team
+            pokemon1 = self.trainer_1.team.team.delete_at_index(0)   #removes the first element of the team
+            pokemon2 = self.trainer_2.team.team.delete_at_index(0)   #removes the first element of the team
             self.dead_pokemon_1 = ArraySortedList(5) #Empty list to store dead pokemon from team 1 to add back later
             self.dead_pokemon_2 = ArraySortedList(5) #Empty list to store dead pokemon from team 2 to add back later
-            
+
+            pokemon1_ListItem = pokemon1
+            pokemon2_ListItem = pokemon2
+            pokemon1 = pokemon1_ListItem.value
+            pokemon2 = pokemon2_ListItem.value
             #Battle Logic
             self.perform_battle(pokemon1, pokemon2)
 
@@ -334,22 +345,22 @@ class Battle:
             #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and returns to back of queue.
             if pokemon1.is_alive() and not pokemon2.is_alive():
                 pokemon1.level_up()
-                self.trainer_1.team.team.add(pokemon1)
-                self.dead_pokemon_2.add(pokemon2)     #pokemon 2 added to dead queue
+                self.trainer_1.team.team.add(pokemon1_ListItem)
+                self.dead_pokemon_2.add(pokemon2_ListItem)     #pokemon 2 added to dead queue
             #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and returns to back of queue.
 
             #Check for Fainting
-            
+
             #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and returns to back of queue.
             if pokemon1.is_alive() and not pokemon2.is_alive():
                 pokemon1.level_up()
-                self.trainer_1.team.team.add(pokemon1)  #adds pokemon1 to sorted team
-                self.dead_pokemon_2.add(pokemon2)     #pokemon 2 added to dead team.
+                self.trainer_1.team.team.add(pokemon1_ListItem)  #adds pokemon1 to sorted team
+                self.dead_pokemon_2.add(pokemon2_ListItem)     #pokemon 2 added to dead team.
             #If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead, then attacker (pokemon 2) lvls up and returns to back of queue.
             elif pokemon2.is_alive() and not pokemon1.is_alive():
                 pokemon2.level_up()
-                self.trainer_2.team.team.add(pokemon2)
-                self.dead_pokemon_1.add(pokemon1)     #Pokemon 1 added to dead queue
+                self.trainer_2.team.team.add(pokemon2_ListItem)
+                self.dead_pokemon_1.add(pokemon1_ListItem)     #Pokemon 1 added to dead queue
             #If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
             else:
                 pokemon1.defend(-1) #pokemon1.health -=1
@@ -357,17 +368,17 @@ class Battle:
 
                 #Covers the cases after they both take 1 damage.
                 if pokemon1.is_alive() and pokemon2.is_alive():
-                    self.trainer_1.team.team.add(pokemon1)  #adds the pokemon back in to sorted team
-                    self.trainer_2.team.team.add(pokemon2)  #adds the pokemon back in to sorted team
+                    self.trainer_1.team.team.add(pokemon1_ListItem)  #adds the pokemon back in to sorted team
+                    self.trainer_2.team.team.add(pokemon2_ListItem)  #adds the pokemon back in to sorted team
                 elif pokemon1.is_alive() and not pokemon2.is_alive():
-                    self.trainer_1.team.team.add(pokemon1)  # adds the pokemon back in to sorted team
-                    self.dead_pokemon_2.add(pokemon2)   # adds the pokemon into dead list.
+                    self.trainer_1.team.team.add(pokemon1_ListItem)  # adds the pokemon back in to sorted team
+                    self.dead_pokemon_2.add(pokemon2_ListItem)   # adds the pokemon into dead list.
                 elif pokemon2.is_alive() and not pokemon1.is_alive():
-                    self.trainer_2.team.team.add(pokemon2)  # adds the pokemon back into sorted team
-                    self.dead_pokemon_1.add(pokemon1)       # adds the pokemon back into dead list
+                    self.trainer_2.team.team.add(pokemon2_ListItem)  # adds the pokemon back into sorted team
+                    self.dead_pokemon_1.add(pokemon1_ListItem)       # adds the pokemon back into dead list
                 else:
-                    self.dead_pokemon_1.add(pokemon1)  # adds the pokemon back into dead list
-                    self.dead_pokemon_2.add(pokemon2)   # adds the pokemon back into dead list
+                    self.dead_pokemon_1.add(pokemon1_ListItem)  # adds the pokemon back into dead list
+                    self.dead_pokemon_2.add(pokemon2_ListItem)   # adds the pokemon back into dead list
 
             # Determine the winner
         if self.trainer_1.team.team.is_empty():
@@ -381,7 +392,7 @@ class Battle:
 if __name__ == '__main__':
     t1 = Trainer('Ash')
     t2 = Trainer('Gary')
-    b = Battle(t1, t2, BattleMode.SET)
+    b = Battle(t1, t2, BattleMode.OPTIMISE)
     b._create_teams()
     winner = b.commence_battle()
 
