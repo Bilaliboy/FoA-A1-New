@@ -27,6 +27,17 @@ class TestPokeTeam(unittest.TestCase):
         poketeam.regenerate_team(battle_mode=BattleMode.SET)
         self.assertGreater(poketeam.team.array[0].get_health(), 0, "Regenerate team not configured properly")
 
+        ''''
+        when testing optimised mode for regeneration
+        poketeam = PokeTeam()
+        poketeam.choose_randomly()
+        poketeam.assemble_team(battle_mode=BattleMode.OPTIMISE)
+        poketeam.assign_team("health")
+        poketeam.team.array[0].value.defend(200)
+        poketeam.regenerate_team(battle_mode=BattleMode.OPTIMISE, criterion="health")
+        self.assertGreater(poketeam.team.array[0].value.get_health(), 0, "Regenerate team not configured properly")
+        '''
+
     @number("2.3")
     @visibility(visibility.VISIBILITY_SHOW)
     def test_internals(self):

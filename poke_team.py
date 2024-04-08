@@ -112,16 +112,30 @@ class PokeTeam:
             self.team_count += 1
 
     def regenerate_team(self, battle_mode: BattleMode, criterion: str = None) -> None:
-        for j in range(self.TEAM_LIMIT):
-            pokemon = self.team[j]
-            if pokemon: # Check if there is a Pokemon object at this index
-                full_health_class = self.find_pokemon_class(pokemon.__class__.__name__)
-            if full_health_class:
-            # Update the health to the full health as defined in the class
-                pokemon.health = full_health_class().health
-        self.assemble_team(battle_mode)
-        if battle_mode == 2:
+        if(battle_mode == BattleMode.OPTIMISE):
+            for j in range(self.TEAM_LIMIT):
+                pokemon = self.team[j]
+                if pokemon: # Check if there is a Pokemon object at this index
+                    full_health_class = self.find_pokemon_class(pokemon.value.__class__.__name__)
+                if full_health_class:
+                # Update the health to the full health as defined in the class
+                    pokemon.value.health = full_health_class().health
+
+            self.temp_team = ArrayR(self.TEAM_LIMIT)
+            for j in range(len(self)):
+                self.temp_team[j] = self.team[j].value
+            self.team = self.temp_team
+            self.assemble_team(battle_mode)
             self.assign_team(criterion)
+        else:
+            for j in range(self.TEAM_LIMIT):
+                pokemon = self.team[j]
+                if pokemon: # Check if there is a Pokemon object at this index
+                    full_health_class = self.find_pokemon_class(pokemon.__class__.__name__)
+                if full_health_class:
+                # Update the health to the full health as defined in the class
+                    pokemon.health = full_health_class().health
+            self.assemble_team(battle_mode)
 
 
     #This function assigns the order of the team based on the criterion list.
@@ -279,6 +293,8 @@ class Trainer:
             self.team.choose_randomly()
         else:
             raise ValueError("Unknown method")
+        for j in range(len(self.team)):
+            self.register_pokemon(self.team[j])
 
     def get_team(self) -> PokeTeam:
         return self.team
