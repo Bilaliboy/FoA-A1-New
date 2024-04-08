@@ -36,6 +36,10 @@ class ArraySortedList(SortedList[T]):
     def __getitem__(self, index: int) -> T:
         """ Magic method. Return the element at a given position. """
         return self.array[index]
+    
+    def print_items(self):
+        for item in self.array:
+            print(item)
 
     def __setitem__(self, index: int, item: ListItem) -> None:
         """

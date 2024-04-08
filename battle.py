@@ -272,8 +272,11 @@ class Battle:
     #This function will use a circular Queue implementation as the each pokemon is sent back to the end of the battle queue after
     #each pokemon battle.
     def rotate_battle(self) -> PokeTeam | None:
-        print(self.trainer_1.get_team())
-        print(self.trainer_2.get_team())
+
+        print("team 1 before battle")
+        print(self.trainer_1.get_team().team.print_items())
+        print("team 2 before battle")
+        print(self.trainer_2.get_team().team.print_items())
 
         self.dead_pokemon_1 = CircularQueue(6) #Empty queue to store dead pokemon from team 1 to add back later
         self.dead_pokemon_2 = CircularQueue(6) #Empty queue to store dead pokemon from team 2 to add back later
@@ -318,8 +321,10 @@ class Battle:
                 else:
                     self.dead_pokemon_1.append(pokemon1)
                     self.dead_pokemon_2.append(pokemon2)
-            
+        
+        print("team 1 after battle")
         print(self.trainer_1.get_team().team.print_items())
+        print("team 2 after battle")
         print(self.trainer_2.get_team().team.print_items())
 
         # Determine the winner after the battle loop
@@ -335,8 +340,10 @@ class Battle:
     #The assign method in Task 2 assigns the order of the team based on the chosen attribute from the criterion list.
     #therefore i believe using a sorted list is the best method in order to do this task as you can sort the team based on the attribute.
     def optimise_battle(self) -> PokeTeam | None:
-        print(self.trainer_1.get_team())
-        print(self.trainer_2.get_team())
+        print("team 1 before battle")
+        print(self.trainer_1.get_team().team.print_items())
+        print("team 2 before battle")
+        print(self.trainer_2.get_team().team.print_items())
         self.dead_pokemon_1 = ArraySortedList(6) #Empty list to store dead pokemon from team 1 to add back later
         self.dead_pokemon_2 = ArraySortedList(6) #Empty list to store dead pokemon from team 2 to add back later
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
@@ -391,9 +398,10 @@ class Battle:
                 else:
                     self.dead_pokemon_1.add(pokemon1_ListItem)  # adds the pokemon back into dead list
                     self.dead_pokemon_2.add(pokemon2_ListItem)   # adds the pokemon back into dead list
-                
-        print(self.trainer_1.get_team())
-        print(self.trainer_2.get_team())
+        print("team 1 after battle")
+        print(self.trainer_1.get_team().team.print_items())
+        print("team 2 after battle")
+        print(self.trainer_2.get_team().team.print_items())
             
 
 
@@ -409,7 +417,7 @@ class Battle:
 if __name__ == '__main__':
     t1 = Trainer('Ash')
     t2 = Trainer('Gary')
-    b = Battle(t1, t2, BattleMode.ROTATE)
+    b = Battle(t1, t2, BattleMode.OPTIMISE)
     b._create_teams()
     winner = b.commence_battle()
 
