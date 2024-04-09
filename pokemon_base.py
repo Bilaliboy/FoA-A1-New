@@ -192,8 +192,8 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         
         yoMama = TypeEffectiveness()
         effectiveness = yoMama.get_effectiveness(attack_type, defend_type)
-        damage_dealt = int(effectiveness) * damage
-        return damage_dealt
+        damage_dealt = effectiveness * damage
+        return int(damage_dealt)
 
     def defend(self, damage: int) -> None:
         """

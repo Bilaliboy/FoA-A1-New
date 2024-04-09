@@ -103,7 +103,7 @@ class ArrayStack(Stack[T]):
         return self.array[self.length-1]
     def __str__(self) -> str:
         """Returns a string representation of the ArrayStack."""
-        return f"<ArrayStack length={len(self)}, elements={self.array}>"
+        return f"{self.array}"
     def copy(self) -> 'ArrayStack':
         """Creates a deep copy of the stack."""
         new_stack = ArrayStack(max_capacity=len(self.array))

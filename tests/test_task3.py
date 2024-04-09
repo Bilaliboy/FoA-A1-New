@@ -57,6 +57,7 @@ class TestBattle(unittest.TestCase):
         _, _ = self.__test_set_battle()
 
         # Check Ash's team size is 2 and that Ash has these 2 Pokemon left
+        
         self.assertEqual(len(self.trainer2.get_team()), 2, f"{self.trainer2.get_name()} should have 2 pokemon left in their team")
         self.assertEqual(str(self.trainer2.get_team()[0]), "Pinsir (Level 5) with 22.0 health and 0 experience")
         self.assertEqual(str(self.trainer2.get_team()[1]), "Bellsprout (Level 1) with 50 health and 0 experience")
