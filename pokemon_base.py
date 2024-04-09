@@ -193,7 +193,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         yoMama = TypeEffectiveness()
         effectiveness = yoMama.get_effectiveness(attack_type, defend_type)
         damage_dealt = effectiveness * damage
-        return int(damage_dealt)
+        return damage_dealt
 
     def defend(self, damage: int) -> None:
         """
@@ -224,10 +224,10 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         next_index = self.evolution_line.index(self.name) + 1
         if next_index < len(self.evolution_line):
             self.name = self.evolution_line[next_index]    
-            self.health = int(self.health * 1.5)
-            self.speed = int(self.speed * 1.5)
-            self.defence = int(self.defence * 1.5)
-            self.battle_power = int(self.battle_power * 1.5)
+            self.health = self.health * 1.5
+            self.speed = self.speed * 1.5
+            self.defence = self.defence * 1.5
+            self.battle_power = self.battle_power * 1.5
         else:
             print(f"the Pokemon {self.name} cannot be evolved to the next stage")
         return None
