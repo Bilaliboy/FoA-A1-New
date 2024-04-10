@@ -2,6 +2,7 @@ from __future__ import annotations
 from poke_team import *
 from typing import Tuple
 from battle_mode import BattleMode
+import random
 
 
 class Battle:
@@ -205,14 +206,11 @@ class Battle:
             pokemon1 = self.trainer_1.team.team.pop() #Pokemon fighting in trainer_1's team
             print(pokemon1)
             pokemon2 = self.trainer_2.team.team.pop() #Pokemon fighting in trainer 2's team
+
             print(pokemon2)
             print(self.trainer_1.pokedox)
-            print("pokemon 1 completion:\n")
-            print(self.trainer_1.get_pokedex_completion())
-            print("pokemon 2 completion:\n")
-            print(self.trainer_2.get_pokedex_completion())
-            print("divising the ratios:\n")
-            print(self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion())
+            
+
             self.trainer_1.register_pokemon(pokemon2)
             print(self.trainer_1.pokedox)
             self.trainer_2.register_pokemon(pokemon1)
@@ -221,6 +219,8 @@ class Battle:
             self.perform_battle(pokemon1,pokemon2)
             print(pokemon1)
             print(pokemon2)
+
+            
 
             #If the attacker (pokemon 1) is still alive and the defender (pokemon 2) is dead, then attacker (pokemon 1) lvls up and remains battling.
             if pokemon1.is_alive() and not pokemon2.is_alive():
