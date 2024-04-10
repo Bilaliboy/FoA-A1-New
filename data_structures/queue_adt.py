@@ -63,7 +63,7 @@ class CircularQueue(Queue[T]):
         self.rear = 0
         self.array = ArrayR(max(self.MIN_CAPACITY,max_capacity))
 
-    #added
+
     def __getitem__(self, index: int):
         return self.array[index]
 
@@ -109,8 +109,10 @@ class CircularQueue(Queue[T]):
         for _ in range(len(self)):
             print(self.array[index])
             index = (index + 1) % len(self.array)
-	   
+
+    #added for testing purposes.
     def __str__(self) -> str:
+        """ Returns a string representation of the queue. """
         elements = []
 
         if self.front <= self.rear:

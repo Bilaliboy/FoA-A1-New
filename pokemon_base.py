@@ -174,6 +174,10 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
 
         Args:
             other_pokemon (Pokemon): The Pokemon that this Pokemon is attacking.
+        
+        Time complexity:
+        Best Case:
+        Worst Case:
 
         Returns:
             int: The damage that this Pokemon inflicts on the other Pokemon during an attack.
@@ -220,6 +224,14 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         """
         Evolves the Pokemon to the next stage in its evolution line, and updates
           its attributes accordingly.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        None
+        
         """
         next_index = self.evolution_line.index(self.name) + 1
         if next_index < len(self.evolution_line):
@@ -251,8 +263,12 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         """
         Returns the value of the attribute specified by the criteria string.
 
-        Parameters:
+        Arguments:
         criteria (str): The criteria string specifying the attribute.
+
+        Time complexity:
+        Best Case:
+        Worst Case:
 
         Returns:
         The value of the requested attribute, or None if the criteria is invalid.

@@ -58,8 +58,19 @@ class ArrayR(Generic[T]):
                 return index
         else:
             raise ValueError("Value does not exist")
-    
+    #added
     def __str__(self) -> str:
+        '''
+        returns the string representation of the array
+
+        Time complexity:
+        best case: O(1)
+        worst case: O(n)
+
+        Returns:
+        string of array
+        None
+        '''
         ret_str = "["
         for i, item in enumerate(self.array):
             ret_str += str(item)

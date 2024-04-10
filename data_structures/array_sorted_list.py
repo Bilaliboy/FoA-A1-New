@@ -37,10 +37,8 @@ class ArraySortedList(SortedList[T]):
         """ Magic method. Return the element at a given position. """
         return self.array[index]
     
-    def print_items(self):
-        for item in self.array:
-            print(item)
 
+    #changed to add descenging
     def __setitem__(self, index: int, item: ListItem) -> None:
         """
         Override the item assignment method to insert an item at a specified index,
@@ -50,6 +48,10 @@ class ArraySortedList(SortedList[T]):
         Args:
             index (int): The position at which to insert the item.
             item (ListItem): The item to insert.
+        
+        Time complexity:
+        Best case:
+        Worst case:
 
         Raises:
             IndexError: If attempting to insert the item would violate the list's sorted order.
@@ -155,10 +157,15 @@ class ArraySortedList(SortedList[T]):
         self[position] = item
         self.length += 1
 
+    #changed to incorporate descending order.
     def _index_to_add(self, item: ListItem) -> int:
         """
         Find the position where the new item should be placed in the sorted list,
         taking into account whether the list is sorted in ascending or descending order.
+
+        Time complexity:
+        Best case:
+        Worst case:
 
         Args:
             item (ListItem): The item to be added to the list.

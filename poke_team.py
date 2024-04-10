@@ -84,6 +84,20 @@ class PokeTeam:
 #How to find pokemon in pokeType.
     #Timecomplexity is O(Comp==) best case and O(n * Comp==) for worst case. Where n is the pokemon classes.
     def find_pokemon_class(self, target_name):
+        '''
+        This function returns searches the Pokelist for the pokemon class.
+
+        Arguments:
+        target_name the name of the pokemon to search for.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        Pokemon Class 
+        None
+        '''
         for pokemon_class in self.POKE_LIST:
             if pokemon_class.__name__ == target_name:
                 return pokemon_class
@@ -91,6 +105,17 @@ class PokeTeam:
 
     #Timecomplexity is O(n * Comp==) best case and O(n^2 * Comp==) for worst case. Where n is the pokemon classes.
     def choose_manually(self):
+        '''
+        This function allows the user to populate the team with pokemons through user input.
+
+        Time complexity:
+        best case:
+        worst case:
+
+
+        Returns:
+        None
+        '''
         team_size = int(input("Please select the size of your team between 1-6\n"))
         for i in range(team_size):
             try:
@@ -104,6 +129,17 @@ class PokeTeam:
 
 
     def choose_randomly(self) -> None:
+        '''
+        This function populates the team randomly according to the team limit.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning pokemon team.
+        None
+        '''
         all_pokemon = get_all_pokemon_types()
         self.team_count = 0
         for i in range(self.TEAM_LIMIT):
@@ -112,6 +148,21 @@ class PokeTeam:
             self.team_count += 1
 
     def regenerate_team(self, battle_mode: BattleMode, criterion: str = None) -> None:
+        '''
+        This function will regenerate pokemons in the team back to full hp according to the battle mode selected.
+        Each team will have a different data structure most suitable for each battle mode.
+
+        Arguments:
+        BattleMode: the selecected battle mode.
+        criterion: the selected criteria.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        None. sets health of existing team to full.
+        '''
         if(battle_mode == BattleMode.OPTIMISE):
             for j in range(self.TEAM_LIMIT):
                 pokemon = self.team[j]
@@ -140,6 +191,19 @@ class PokeTeam:
 
     #This function assigns the order of the team based on the criterion list.
     def assign_team(self, criterion: str = None) -> None:
+        '''
+        This function assigns the team order based on the criteria chosen example "health".
+
+        Arguments:
+        criterion: the selected criteria is inputed as a string.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        None. Sorts the team according to critria chosen.
+        '''
         #Created a new temporary list for the team.
         temp_list = ArraySortedList(self.TEAM_LIMIT)
         for j in range(self.team_count):
@@ -156,6 +220,20 @@ class PokeTeam:
     #This function assembles the team based on the battle_mode selected.
     #Each battle_mode has different data structures.
     def assemble_team(self, battle_mode: BattleMode) -> None:
+        '''
+        This function assembles three different data structures most suitable for each battle_mode.
+        The three data structures are Stack, Circular-Queue and an Array Sorted List.
+        
+        Arguments:
+        battle_mode: the selected battle mode.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        None. Changes the existing team data structure.
+        '''
         if battle_mode == BattleMode.SET:
             temp_team = ArrayStack(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the stack
@@ -183,6 +261,21 @@ class PokeTeam:
     #Rotate Mode reverses the second half of the team
     #Optimise mode it reverses the other, either ascending to descending or descending to ascending order.
     def special(self, battle_mode: BattleMode) -> None:
+        '''
+        This function peforms a change in the order of the pokemon within the team. Each battle mode has a different order.
+        SET mode reverses the first half of the team.
+        Rotate mode reverses the second half of the team.
+        Optimise mode it reverses the order of the team, either ascending to descending or descending to ascending order each time special is called.
+        
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning pokemon team.
+        None
+        '''
         if battle_mode == BattleMode.SET:
             temp_stack1 = ArrayStack(len(self.team))
             temp_stack2 = ArrayStack(len(self.team))
@@ -245,17 +338,18 @@ class PokeTeam:
         """
         return min(self.TEAM_LIMIT,len(self.team))
 
-    '''
     def __str__(self):
-        ret_str = "["
-        for i, item in enumerate(self.team):
-            ret_str += str(item)
-            ret_str += ", "
-        ret_str = ret_str[:-2] + "]"
-        return ret_str
-    '''
-    ''''''
-    def __str__(self):
+        '''
+        This function returns a string representation of the team based on the data structure of the team.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning pokemon team.
+        None
+        '''
         ret_str = "["
         if isinstance(self.team, ArrayStack):
             for i in range(len(self.team.array)):
@@ -287,6 +381,20 @@ class Trainer:
 
 
     def pick_team(self, method: str) -> None:
+        '''
+        This function selects the team to be selected either randomly or manually through a sting arguement.
+        The method also registers the pokemon selected either randomly or manually.
+
+        Arguments:
+        method: the method to be used to select the team. A string of the method either Manual or Random.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        None.
+        '''
         if method == "Manual":
             self.team.choose_manually()
         elif method == 'Random':
@@ -297,24 +405,78 @@ class Trainer:
             self.register_pokemon(self.team[j])
 
     def get_team(self) -> PokeTeam:
+        '''
+        This function retuns the team.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        the team.
+        '''
+        
         return self.team
 
     def get_name(self) -> str:
+        '''
+        This function returns the name of the trainer.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        Name of the trainer as a string.
+        '''
         return self.name
 
     def register_pokemon(self, pokemon: Pokemon) -> None:
+        '''
+        This function register pokemon within the assembled team through a for loop. It uses the add method within stack to prevent duplicates.
+
+        Arguments:
+        pokemon: the pokemon to be registered within the team (object).
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        None
+        '''
         pokemon_type = pokemon.get_poketype()
         if pokemon_type not in self.pokedox:
             self.pokedox.add(pokemon_type)
 
 
     def get_pokedex_completion(self) -> float:
+        '''
+        This function returns a float value rounded to 2 decimal place of the Pokedex completion.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        rounded float value for Pokedex completion.
+        '''
         poke_types_stored = len(self.pokedox)
         maximum_size_of_pokedex = len(PokeType)
 
         return round((poke_types_stored/maximum_size_of_pokedex), 2 )
 
     def __str__(self) -> str:
+        '''
+        Method returns the trainer name and pokedex completion percentage as a string.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        String of the trainer name and pokedex completion percentage.
+        '''
         precent_completion = int(self.get_pokedex_completion() * 100)
         return f"Trainer {self.name} Pokedex Completion: {precent_completion}%"
 

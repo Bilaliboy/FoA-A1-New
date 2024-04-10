@@ -7,6 +7,23 @@ import random
 
 class Battle:
     def __init__(self, trainer_1: Trainer, trainer_2: Trainer, battle_mode: BattleMode, criterion = "health") -> None:
+        '''
+        Intialization of the battle class.
+
+        Arguments:
+        Trainer_1: trainer number 1
+        trainer_2: trainer number 2
+        battle_mode: the battle method being implemented
+        criterion: the criterion to be used for sorting the optimised mode.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning pokemon team.
+        None
+        '''
         self.trainer_1 = trainer_1
         self.trainer_2 = trainer_2
         self.battle_mode = battle_mode
@@ -15,8 +32,17 @@ class Battle:
 
     def commence_battle(self) -> Trainer | None:
         '''
-        Each battle mode already retuns a winner or none if its draw.
         This function will be called to start the battle and will return the outcome of the battle.
+
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning trianer or None if the battle ends in a draw.
+        None
+        
         '''
         if self.battle_mode == BattleMode.SET:
             result = self.set_battle()
@@ -44,6 +70,20 @@ class Battle:
                 return None
 
     def perform_battle(self, pokemon1: Pokemon, pokemon2: Pokemon) -> None:
+        '''
+        This function contains the battle logic for the three different battle modes. 
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Arguments:
+        pokemon1: pokemon from trainer 1 team battling.
+        pokemon2: pokemon from trainer 2 team battling.
+
+        Returns:
+        None
+        '''
     # If P1 speed is greater than P2
         if pokemon1.get_speed() > pokemon2.get_speed():
             damage = ceil(pokemon1.attack(pokemon2) * (self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion()))
@@ -68,6 +108,17 @@ class Battle:
 
 
     def _create_teams(self) -> None:
+        '''
+        This function will create a random or manual team based on the battle condition.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        None
+        '''
+
         if self.battle_mode == BattleMode.SET:
             self.trainer_1.pick_team("Random")
             self.trainer_2.pick_team("Random")
@@ -192,10 +243,19 @@ class Battle:
 
     #This function will use a stack as the last pokemon selected is the first pokemon battling.
     def set_battle(self) -> PokeTeam | None:
-        #Then Store the pokemon at the top as another variable example pokemon_1 and pokemon_2.
-        #then we go through the battle logic:
-        #First we compare the speed of the pokemons and complete the battle phase for the faster pokemon against slower pokemon.
-        #If both pokemons
+        '''
+        This function returns the winner of a pokemon battle against 2 teams. The function will behave in a king of the hill manner.
+        Where pokemons keep fighting untill they are defeated in combat.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning pokemon team.
+        None
+        '''
+        
 
         print(self.trainer_1.get_team())
         print(self.trainer_2.get_team())
@@ -239,6 +299,16 @@ class Battle:
                 self.dead_pokemon_1.push(pokemon1)     #Pokemon 1 added to dead stack
                 print(self.dead_pokemon_1)
                 self.trainer_2.team.team.push(pokemon2)
+
+            elif not(pokemon1.is_alive() and pokemon2.is_alive()):
+                #Both pokemon have fainted added to dead stack.
+                self.dead_pokemon_1.push(pokemon1)
+                self.dead_pokemon_2.push(pokemon2)
+                if self.trainer_1.team.team.is_empty() and self.trainer_2.team.team.is_empty():
+                    break
+                else:
+                    continue
+
                 
 
 
@@ -268,6 +338,10 @@ class Battle:
                     #Both pokemon have fainted added to dead stack.
                     self.dead_pokemon_1.push(pokemon1)
                     self.dead_pokemon_2.push(pokemon2)
+                    if self.trainer_1.team.team.is_empty() and self.trainer_2.team.team.is_empty():
+                        break
+                    else:
+                        continue
 
 
             print(self.trainer_1.get_team())
@@ -293,6 +367,19 @@ class Battle:
     #This function will use a circular Queue implementation as the each pokemon is sent back to the end of the battle queue after
     #each pokemon battle.
     def rotate_battle(self) -> PokeTeam | None:
+
+        """
+        This function returns the winner of a pokemon battle against 2 teams. The function will behave in a rotated manner.
+         Where pokemons are cycled around throughout the battle.
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning pokemon team.
+        None if ends in draw.
+        """
 
         print("team 1 before battle")
         self.trainer_1.get_team().team.print_items()
@@ -370,6 +457,18 @@ class Battle:
     #The assign method in Task 2 assigns the order of the team based on the chosen attribute from the criterion list.
     #therefore i believe using a sorted list is the best method in order to do this task as you can sort the team based on the attribute.
     def optimise_battle(self) -> PokeTeam | None:
+        """
+        This function returns the winner of a pokemon battle against 2 teams. The function operates based on the criteria selected when creating the team.
+       
+
+        Time complexity:
+        best case:
+        worst case:
+
+        Returns:
+        The winning pokemon team.
+        None if ends in draw.
+        """
 
         #print("team 1 before battle")
         #self.trainer_1.get_team().team.print_items()
@@ -377,15 +476,17 @@ class Battle:
         #print("team 2 before battle")
         #self.trainer_2.get_team().team.print_items()
 
-        self.dead_pokemon_1 = ArraySortedList(6) #Empty list to store dead pokemon from team 1 to add back later
-        self.dead_pokemon_2 = ArraySortedList(6) #Empty list to store dead pokemon from team 2 to add back later
+        self.dead_pokemon_1 = ArraySortedList(6) #Empty list to store dead pokemon from team 1 to add back later for regeneration
+        self.dead_pokemon_2 = ArraySortedList(6) #Empty list to store dead pokemon from team 2 to add back later for regeneration
 
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             #before we delete at index
-            self.trainer_1.get_team().team.print_items()
+
             print("\n")
-            print("team 2 before battle")
-            self.trainer_2.get_team().team.print_items()
+            print(self.trainer_1.get_pokedex_completion())
+            print("\n")
+            print(self.trainer_2.get_pokedex_completion())
+
 
             pokemon1 = self.trainer_1.team.team.delete_at_index(0)   #removes the first element of the team
             print("\n")
@@ -396,16 +497,14 @@ class Battle:
             print("\n")
 
             #after we delete at index. problem occurs here.
-            print("team 1 before battle")
-            self.trainer_1.get_team().team.print_items()
-            print("\n")
-            print("team 2 before battle")
-            self.trainer_2.get_team().team.print_items()
+            
 
             pokemon1_ListItem = pokemon1
             pokemon2_ListItem = pokemon2
             pokemon1 = pokemon1_ListItem.value
             pokemon2 = pokemon2_ListItem.value
+            
+            
 
             self.trainer_1.register_pokemon(pokemon2)
             self.trainer_2.register_pokemon(pokemon1)
@@ -450,10 +549,11 @@ class Battle:
                 else:
                     self.dead_pokemon_1.add(pokemon1_ListItem)  # adds the pokemon back into dead list
                     self.dead_pokemon_2.add(pokemon2_ListItem)   # adds the pokemon back into dead list
+
         print("team 1 after battle")
-        self.trainer_1.get_team().team.print_items()
+        print(self.trainer_1.get_team().__str__)
         print("team 2 after battle")
-        self.trainer_2.get_team().team.print_items()
+        print(self.trainer_2.get_team().__str__)
 
 
 
@@ -471,7 +571,7 @@ class Battle:
 if __name__ == '__main__':
     t1 = Trainer('Ash')
     t2 = Trainer('Gary')
-    b = Battle(t1, t2, BattleMode.SET)
+    b = Battle(t1, t2, BattleMode.OPTIMISE)
     b._create_teams()
     winner = b.commence_battle()
 
