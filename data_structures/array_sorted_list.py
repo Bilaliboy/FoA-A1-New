@@ -164,8 +164,9 @@ class ArraySortedList(SortedList[T]):
         taking into account whether the list is sorted in ascending or descending order.
 
         Time complexity:
-        Best case:
-        Worst case:
+        Best case: O(1)
+        Worst case: O(nlog(n))
+        
 
         Args:
             item (ListItem): The item to be added to the list.

@@ -9,20 +9,6 @@ class Battle:
     def __init__(self, trainer_1: Trainer, trainer_2: Trainer, battle_mode: BattleMode, criterion = "health") -> None:
         '''
         Intialization of the battle class.
-
-        Arguments:
-        Trainer_1: trainer number 1
-        trainer_2: trainer number 2
-        battle_mode: the battle method being implemented
-        criterion: the criterion to be used for sorting the optimised mode.
-
-        Time complexity:
-        best case:
-        worst case:
-
-        Returns:
-        The winning pokemon team.
-        None
         '''
         self.trainer_1 = trainer_1
         self.trainer_2 = trainer_2
@@ -36,8 +22,8 @@ class Battle:
 
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(n*comp==)
+        worst case: O(n*comp==)
 
         Returns:
         The winning trianer or None if the battle ends in a draw.
@@ -45,7 +31,7 @@ class Battle:
         
         '''
         if self.battle_mode == BattleMode.SET:
-            result = self.set_battle()
+            result = self.set_battle()          
             if result == self.trainer_1.team.team:
                 return self.trainer_1
             elif result == self.trainer_2.team.team:
@@ -74,8 +60,8 @@ class Battle:
         This function contains the battle logic for the three different battle modes. 
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(comp==)
+        worst case: O(1)
 
         Arguments:
         pokemon1: pokemon from trainer 1 team battling.
@@ -112,8 +98,9 @@ class Battle:
         This function will create a random or manual team based on the battle condition.
 
         Time complexity:
-        best case:
-        worst case:
+        best case:  O(comp== * n)
+        worst case: O(comp== * n^2 log n)
+        n = pokemon in team
 
         Returns:
         None
@@ -122,7 +109,7 @@ class Battle:
         if self.battle_mode == BattleMode.SET:
             self.trainer_1.pick_team("Random")
             self.trainer_2.pick_team("Random")
-            self.trainer_1.team.assemble_team(BattleMode.SET)
+            self.trainer_1.team.assemble_team(BattleMode.SET)   # O(comp== * n)
             self.trainer_2.team.assemble_team(BattleMode.SET)
 
         elif self.battle_mode == BattleMode.ROTATE:
@@ -134,9 +121,9 @@ class Battle:
         elif self.battle_mode == BattleMode.OPTIMISE:
             self.trainer_1.pick_team("Random")
             self.trainer_2.pick_team("Random")
-            self.trainer_1.team.assemble_team(BattleMode.OPTIMISE)
+            self.trainer_1.team.assemble_team(BattleMode.OPTIMISE) #O(comp== * n^2 log n)
             self.trainer_2.team.assemble_team(BattleMode.OPTIMISE)
-            self.trainer_1.team.assemble_team(self.criterion)
+            self.trainer_1.team.assemble_team(self.criterion)   
             self.trainer_2.team.assemble_team(self.criterion)
 
 
@@ -248,8 +235,8 @@ class Battle:
         Where pokemons keep fighting untill they are defeated in combat.
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(n comp==) because we only running random. and complexity of 
+        worst case: O(n comp==)
 
         Returns:
         The winning pokemon team.
@@ -373,8 +360,9 @@ class Battle:
          Where pokemons are cycled around throughout the battle.
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(n * comp==)
+        worst case: O(n * comp==)
+        n is pokemons
 
         Returns:
         The winning pokemon team.
@@ -462,8 +450,8 @@ class Battle:
        
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(n*comp==)
+        worst case: O(n*comp==)
 
         Returns:
         The winning pokemon team.
@@ -482,19 +470,11 @@ class Battle:
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             #before we delete at index
 
-            print("\n")
-            print(self.trainer_1.get_pokedex_completion())
-            print("\n")
-            print(self.trainer_2.get_pokedex_completion())
+            
 
 
             pokemon1 = self.trainer_1.team.team.delete_at_index(0)   #removes the first element of the team
-            print("\n")
-            print(pokemon1)
             pokemon2 = self.trainer_2.team.team.delete_at_index(0)   #removes the first element of the team
-            print("\n")
-            print(pokemon2)
-            print("\n")
 
             #after we delete at index. problem occurs here.
             

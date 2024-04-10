@@ -91,8 +91,9 @@ class PokeTeam:
         target_name the name of the pokemon to search for.
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(comp==)
+        worst case: O(n * Comp==)
+        n is pokemon
 
         Returns:
         Pokemon Class 
@@ -109,8 +110,9 @@ class PokeTeam:
         This function allows the user to populate the team with pokemons through user input.
 
         Time complexity:
-        best case:
-        worst case:
+        best case:O(n * comp==) if team size is 1.
+        worst case:O(n^2 comp==)\
+        n is the number of pokemon classes.
 
 
         Returns:
@@ -123,7 +125,7 @@ class PokeTeam:
             except ValueError:
                 print("Please enter a string")
                 continue
-            pokemon_class = self.find_pokemon_class(target_name)
+            pokemon_class = self.find_pokemon_class(target_name)    #O(n)
             self.team[i] = pokemon_class()
             self.team_count += 1
 
@@ -133,8 +135,9 @@ class PokeTeam:
         This function populates the team randomly according to the team limit.
 
         Time complexity:
-        best case:
-        worst case:
+        best case:  O(n)   as we always go through 6 times due to team limit.
+        worst case: O(n^2) we go through pokelist inside the for loop too.
+        n = pokemons in pokelist.
 
         Returns:
         The winning pokemon team.
@@ -144,7 +147,7 @@ class PokeTeam:
         self.team_count = 0
         for i in range(self.TEAM_LIMIT):
             rand_int = random.randint(0, len(all_pokemon)-1)
-            self.team[i] = all_pokemon[rand_int]()
+            self.team[i] = all_pokemon[rand_int]()  #all_pokemon has size n of pokemons. O(n)
             self.team_count += 1
 
     def regenerate_team(self, battle_mode: BattleMode, criterion: str = None) -> None:
@@ -157,36 +160,36 @@ class PokeTeam:
         criterion: the selected criteria.
 
         Time complexity:
-        best case:
-        worst case:
+        best case:  O(n^2 * comp==)
+        worst case: #O(n^2 log(n) * comp==) Optimised mode is chosen
 
         Returns:
         None. sets health of existing team to full.
         '''
-        if(battle_mode == BattleMode.OPTIMISE):
+        if(battle_mode == BattleMode.OPTIMISE): #O(n^2 log(n) * comp==)
             for j in range(self.TEAM_LIMIT):
                 pokemon = self.team[j]
                 if pokemon: # Check if there is a Pokemon object at this index
-                    full_health_class = self.find_pokemon_class(pokemon.value.__class__.__name__)
+                    full_health_class = self.find_pokemon_class(pokemon.value.__class__.__name__) #O(n)
                 if full_health_class:
                 # Update the health to the full health as defined in the class
                     pokemon.value.health = full_health_class().health
 
             self.temp_team = ArrayR(self.TEAM_LIMIT)
-            for j in range(len(self)):
+            for j in range(len(self)):                  #O(n)
                 self.temp_team[j] = self.team[j].value
             self.team = self.temp_team
-            self.assemble_team(battle_mode)
+            self.assemble_team(battle_mode)     #O(n * comp==)
             self.assign_team(criterion)
         else:
-            for j in range(self.TEAM_LIMIT):
+            for j in range(self.TEAM_LIMIT):        #O(n)
                 pokemon = self.team[j]
                 if pokemon: # Check if there is a Pokemon object at this index
-                    full_health_class = self.find_pokemon_class(pokemon.__class__.__name__)
+                    full_health_class = self.find_pokemon_class(pokemon.__class__.__name__) #O(n * comp==)
                 if full_health_class:
                 # Update the health to the full health as defined in the class
                     pokemon.health = full_health_class().health
-            self.assemble_team(battle_mode)
+            self.assemble_team(battle_mode)     #O(n)
 
 
     #This function assigns the order of the team based on the criterion list.
@@ -198,17 +201,18 @@ class PokeTeam:
         criterion: the selected criteria is inputed as a string.
 
         Time complexity:
-        best case:
-        worst case:
+        best case:O(1)
+        worst case:O(n)
+        n is pokemon in team
 
         Returns:
         None. Sorts the team according to critria chosen.
         '''
         #Created a new temporary list for the team.
         temp_list = ArraySortedList(self.TEAM_LIMIT)
-        for j in range(self.team_count):
+        for j in range(self.team_count):        #O(n)
             pokemon = self.team[j]
-            key = pokemon.value.get__attribute__by__criteria(criterion) #method made in pokemon_base.py
+            key = pokemon.value.get__attribute__by__criteria(criterion) #method made in pokemon_base.py O(comp==)
             temp_list.add(ListItem(key=key, value=pokemon.value))
         # Clear the current team to repopulate it
         self.team.reset()
@@ -228,32 +232,33 @@ class PokeTeam:
         battle_mode: the selected battle mode.
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(comp== * n)
+        worst case: O(comp== * n^2 log n)  when optimised mode is run
+        n is team limit.
 
         Returns:
         None. Changes the existing team data structure.
         '''
-        if battle_mode == BattleMode.SET:
+        if battle_mode == BattleMode.SET:               #O(Comp==)
             temp_team = ArrayStack(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the stack
-            for pokemon in range(len(self.team)):
-                temp_team.push(self.team[pokemon])
+            for pokemon in range(len(self.team)):       #len = O(1)     for loop O(n) n = team limit.
+                temp_team.push(self.team[pokemon])      #push() = O(1)
 
-            self.team = temp_team.copy()
-        elif battle_mode == BattleMode.ROTATE:
+            self.team = temp_team.copy()                #O(n) added to the stack adt.
+        elif battle_mode == BattleMode.ROTATE:          #O(comp==)
             circular_queue = CircularQueue(self.TEAM_LIMIT)
             # Add each Pokémon in self.team to the circular queue
-            for pokemon in self.team:
-                circular_queue.append(pokemon)
+            for pokemon in self.team:                   #O(n)
+                circular_queue.append(pokemon)          #append() = O(1)
             self.team = circular_queue
         #Optimised Mode
-        elif battle_mode == BattleMode.OPTIMISE:
+        elif battle_mode == BattleMode.OPTIMISE:        #O(comp==)
             sorted_list = ArraySortedList(self.TEAM_LIMIT)
 
-            for pokemon in self.team:
-                key = pokemon.get__attribute__by__criteria('health')
-                sorted_list.add(ListItem(key=key, value=pokemon))
+            for pokemon in self.team:                   #O(n)
+                key = pokemon.get__attribute__by__criteria('health')    #O(comp==)
+                sorted_list.add(ListItem(key=key, value=pokemon))       #add() = O(nlog(n))
             self.team = sorted_list
 
 
@@ -269,14 +274,15 @@ class PokeTeam:
         
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(comp==) if mode chosen is manual with 1 pokemon in team
+        worst case: O(nlog(n) * comp==)
+        n = team size
 
         Returns:
         The winning pokemon team.
         None
         '''
-        if battle_mode == BattleMode.SET:
+        if battle_mode == BattleMode.SET:           #O(n*comp=)
             temp_stack1 = ArrayStack(len(self.team))
             temp_stack2 = ArrayStack(len(self.team))
 
@@ -293,7 +299,7 @@ class PokeTeam:
             while not temp_stack1.is_empty():
                 self.team.push(temp_stack1.pop())
 
-        elif battle_mode == BattleMode.ROTATE:
+        elif battle_mode == BattleMode.ROTATE:      #O(n*comp==)
             q_length = len(self.team)
             half_point = q_length // 2
 
@@ -315,7 +321,7 @@ class PokeTeam:
             for i in range(second_half_size-1,-1,-1):
                 self.team.append(second_half[i])
 
-        elif battle_mode == BattleMode.OPTIMISE:
+        elif battle_mode == BattleMode.OPTIMISE:    #O(n*log(n) * comp==)
             self.descending = not self.descending
             temp_list = ArraySortedList(self.TEAM_LIMIT, self.descending)
 
@@ -343,8 +349,9 @@ class PokeTeam:
         This function returns a string representation of the team based on the data structure of the team.
 
         Time complexity:
-        best case:
-        worst case:
+        best case:O(isinstance * n)
+        worst case: O(isinstance * n)
+        n = pokemon in team.
 
         Returns:
         The winning pokemon team.
@@ -409,8 +416,8 @@ class Trainer:
         This function retuns the team.
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(1)
+        worst case: O(1)
 
         Returns:
         the team.
@@ -423,8 +430,8 @@ class Trainer:
         This function returns the name of the trainer.
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(1)
+        worst case: O(1)
 
         Returns:
         Name of the trainer as a string.
@@ -439,8 +446,9 @@ class Trainer:
         pokemon: the pokemon to be registered within the team (object).
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(1)
+        worst case: O(n)
+        n = pokemon in pokemonclass.
 
         Returns:
         None
@@ -455,8 +463,8 @@ class Trainer:
         This function returns a float value rounded to 2 decimal place of the Pokedex completion.
 
         Time complexity:
-        best case:
-        worst case:
+        best case:  O(1)
+        worst case: O(1)
 
         Returns:
         rounded float value for Pokedex completion.
@@ -471,8 +479,8 @@ class Trainer:
         Method returns the trainer name and pokedex completion percentage as a string.
 
         Time complexity:
-        best case:
-        worst case:
+        best case: O(1)
+        worst case: O(1)
 
         Returns:
         String of the trainer name and pokedex completion percentage.
