@@ -45,22 +45,22 @@ class Battle:
     def perform_battle(self, pokemon1: Pokemon, pokemon2: Pokemon) -> None:
     # If P1 speed is greater than P2
         if pokemon1.get_speed() > pokemon2.get_speed():
-            damage = ceil(pokemon1.attack(pokemon2)) * (self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion())
+            damage = ceil(pokemon1.attack(pokemon2) * (self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion()))
             pokemon2.defend(damage)
             if pokemon2.is_alive():
-                counter_damage_to_p1 = ceil(pokemon2.attack(pokemon1)) * (self.trainer_2.get_pokedex_completion()/self.trainer_1.get_pokedex_completion())  # If still alive, P2 attacks P1
+                counter_damage_to_p1 = ceil(pokemon2.attack(pokemon1) * (self.trainer_2.get_pokedex_completion()/self.trainer_1.get_pokedex_completion()))  # If still alive, P2 attacks P1
                 pokemon1.defend(counter_damage_to_p1)
         # If P2 speed is greater than P1
         elif pokemon1.get_speed() < pokemon2.get_speed():
-            damage = ceil(pokemon2.attack(pokemon1)) * (self.trainer_2.get_pokedex_completion()/self.trainer_1.get_pokedex_completion())
+            damage = ceil(pokemon2.attack(pokemon1) * (self.trainer_2.get_pokedex_completion()/self.trainer_1.get_pokedex_completion()))
             pokemon1.defend(damage)
             if pokemon1.is_alive():
-                counter_damage_to_p2 = ceil(pokemon1.attack(pokemon2)) * (self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion())  # If still alive, P1 attacks P2
+                counter_damage_to_p2 = ceil(pokemon1.attack(pokemon2) * (self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion()))  # If still alive, P1 attacks P2
                 pokemon2.defend(counter_damage_to_p2)
         elif pokemon1.get_speed() == pokemon2.get_speed():
             # Perform simultaneous attacks if speed is the same
-            damage_to_p2 = ceil(pokemon1.attack(pokemon2)) * (self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion())
-            damage_to_p1 = ceil(pokemon2.attack(pokemon1)) * (self.trainer_2.get_pokedex_completion()/self.trainer_1.get_pokedex_completion())
+            damage_to_p2 = ceil(pokemon1.attack(pokemon2) * (self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion()))
+            damage_to_p1 = ceil(pokemon2.attack(pokemon1) * (self.trainer_2.get_pokedex_completion()/self.trainer_1.get_pokedex_completion()))
             pokemon1.defend(damage_to_p1)
             pokemon2.defend(damage_to_p2)
             
@@ -207,6 +207,12 @@ class Battle:
             pokemon2 = self.trainer_2.team.team.pop() #Pokemon fighting in trainer 2's team
             print(pokemon2)
             print(self.trainer_1.pokedox)
+            print("pokemon 1 completion:\n")
+            print(self.trainer_1.get_pokedex_completion())
+            print("pokemon 2 completion:\n")
+            print(self.trainer_2.get_pokedex_completion())
+            print("divising the ratios:\n")
+            print(self.trainer_1.get_pokedex_completion()/self.trainer_2.get_pokedex_completion())
             self.trainer_1.register_pokemon(pokemon2)
             print(self.trainer_1.pokedox)
             self.trainer_2.register_pokemon(pokemon1)
@@ -299,6 +305,8 @@ class Battle:
         while not self.trainer_1.team.team.is_empty() and not self.trainer_2.team.team.is_empty():
             # serve the first Pokémon of each team for the battle
             pokemon1 = self.trainer_1.team.team.serve()
+            print("\n")
+            self.trainer_1.get_team().team.print_items()
             pokemon2 = self.trainer_2.team.team.serve()
 
             # Register the Pokémons
@@ -313,10 +321,13 @@ class Battle:
             if pokemon1.is_alive() and not pokemon2.is_alive():
                 pokemon1.level_up()
                 self.trainer_1.team.team.append(pokemon1)
+                print("\n")
+                self.trainer_1.get_team().team.print_items()
                 self.dead_pokemon_2.append(pokemon2)
             # If the attacker (pokemon 2) is still alive and the defender (pokemon 1) is dead
             elif pokemon2.is_alive() and not pokemon1.is_alive():
                 pokemon2.level_up()
+                print("\n")
                 self.trainer_2.team.team.append(pokemon2)
                 self.dead_pokemon_1.append(pokemon1)
             # If both pokemon1 and pokemon2 are alive after the battle phase, then both take 1 damage.
@@ -326,9 +337,13 @@ class Battle:
                 # Add pokemons back to respective teams or dead queues accordingly
                 if pokemon1.is_alive() and pokemon2.is_alive():
                     self.trainer_1.team.team.append(pokemon1)
+                    print("\n")
+                    self.trainer_1.get_team().team.print_items()
                     self.trainer_2.team.team.append(pokemon2)
                 elif pokemon1.is_alive() and not pokemon2.is_alive():
                     self.trainer_1.team.team.append(pokemon1)
+                    print("\n")
+                    self.trainer_1.get_team().team.print_items()
                     self.dead_pokemon_2.append(pokemon2)
                 elif pokemon2.is_alive() and not pokemon1.is_alive():
                     self.trainer_2.team.team.append(pokemon2)

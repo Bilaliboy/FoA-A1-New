@@ -333,6 +333,7 @@ if __name__ == '__main__':
 '''
 Bug fixes for registering pokemon in pokedex.
 
+
 trainer = Trainer('Ash')
 print(trainer)
 
@@ -352,8 +353,11 @@ print("Pokédex after registering Meowth:", trainer.pokedox)
 trainer.register_pokemon(Zapdos())
 print("Pokédex after registering Zapdos:", trainer.pokedox)
 print(trainer)
-
+trainer.register_pokemon(Pikachu())
+print("Pokédex after registering Pikachu:", trainer.pokedox)
+print(trainer.get_pokedex_completion())
 '''
+
 '''
 #circular que. Test.
 team = PokeTeam()
