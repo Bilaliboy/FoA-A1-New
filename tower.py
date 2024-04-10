@@ -10,7 +10,8 @@ class BattleTower:
     MIN_LIVES = 1
     MAX_LIVES = 3
     def __init__(self) -> None:
-        raise NotImplementedError
+        self.player_trainer = Trainer("Player trainer")
+        
 
     # Hint: use random.randint() for randomisation
     def set_my_trainer(self, trainer: Trainer) -> None:
